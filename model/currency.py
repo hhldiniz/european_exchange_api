@@ -2,6 +2,10 @@ class Currency:
     def __init__(self, currency_code: str, value: float, historical_date: str, timestamp: str, friendly_name: str):
         self.currency_code = currency_code
         self.value = value
-        self.historicalDate = historical_date
+        self.historical_date = historical_date
         self.timestamp = timestamp
         self.friendly_name = friendly_name
+
+    def to_dict(self) -> dict:
+        return {'currency_cod': self.currency_code, 'value': self.value, 'historical_date': self.historical_date,
+                'timestamp': self.timestamp, 'friendly_name': self.friendly_name}

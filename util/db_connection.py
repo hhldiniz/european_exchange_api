@@ -14,8 +14,17 @@ class DatabaseConnection(metaclass=Singleton):
     def insert(self, collection: str, data: dict):
         self.__database.get_collection(collection).insert(data)
 
+    def insert_many(self, collection: str, data: [dict]):
+        self.__database.get_collection(collection).insert_many(data)
+
     def update_one(self, collection: str, condition: dict, data: dict):
         self.__database.get_collection(collection).replace_one(condition, data)
 
     def update_many(self, collection: str, condition: dict, data: dict):
         self.__database.get_collection(collection).replace_one(condition, data)
+
+    def delete_one(self, collection: str, ftr: dict):
+        self.__database.get_collection(collection).delete_one(ftr)
+
+    def delete_many(self, collection: str, ftr: dict):
+        self.__database.get_collection(collection).delete_many(ftr)
