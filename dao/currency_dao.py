@@ -1,28 +1,42 @@
+from dao.base_dao import BaseDao
 from model.currency import Currency
-from util.db_connection import DatabaseConnection
 
 
-class CurrencyDao:
+class CurrencyDao(BaseDao):
     def __init__(self):
-        self.__db_connection = DatabaseConnection()
+        super().__init__()
 
     def insert(self, *currency: Currency):
         if currency.__len__() == 1:
-            self.__db_connection.insert(self.collection(), currency[0].to_dict())
+            self._db_connection.insert(self.collection(), currency[0].to_dict())
         elif currency.__len__() > 1:
-            self.__db_connection.insert_many(self.collection(),
-                                             list(map(lambda this_currency: this_currency.to_dict(), currency)))
+            self._db_connection.insert_many(self.collection(),
+                                            list(map(lambda this_currency: this_currency.to_dict(), currency)))
         else:
             print("CurrencyDao#insert: Nothing to insert")
 
     def delete(self, *currency: Currency):
         if currency.__len__() == 1:
-            self.__db_connection.delete_one(self.collection(), {'currency_cod': currency[0].currency_code})
+            self._db_connection.delete_one(self.collection(), {'currency_code': currency[0].currency_code})
         elif currency.__len__() > 1:
-            self.__db_connection.delete_many(self.collection(), {'currency_cod': ''})
+            self._db_connection.delete_many(self.collection(),
+                                            {'currency_code': {
+                                                "$set": list(map(lambda this_currency: this_currency.currency_code,
+                                                                 currency))}})
+        else:
+            print("CurrencyDao#delete: Nothing to delete")
 
-    @staticmethod
-    def schema() -> dict:
+    def update(self, *currency: Currency):
+        if currency.__len__() == 1:
+            self._db_connection.update_one(self.collection(), {'currency_code': currency[0].currency_code},
+                                           currency[0].to_dict())
+        elif currency.__len__() > 1:
+            for l_currency in currency:
+                self.update(l_currency)
+        else:
+            print("CurrencyDao#update: Nothing to update")
+
+    def schema(self) -> dict:
         return {
             'currency_code': {
                 'type': 'string',
@@ -54,6 +68,5 @@ class CurrencyDao:
             }
         }
 
-    @staticmethod
-    def collection() -> str:
+    def collection(self) -> str:
         return "currency"

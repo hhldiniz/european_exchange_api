@@ -18,13 +18,19 @@ class DatabaseConnection(metaclass=Singleton):
         self.__database.get_collection(collection).insert_many(data)
 
     def update_one(self, collection: str, condition: dict, data: dict):
-        self.__database.get_collection(collection).replace_one(condition, data)
+        self.__database.get_collection(collection).replace_one(condition, {"$set": data})
 
     def update_many(self, collection: str, condition: dict, data: dict):
-        self.__database.get_collection(collection).replace_one(condition, data)
+        self.__database.get_collection(collection).replace_one(condition, {"$set": data})
 
     def delete_one(self, collection: str, ftr: dict):
         self.__database.get_collection(collection).delete_one(ftr)
 
     def delete_many(self, collection: str, ftr: dict):
         self.__database.get_collection(collection).delete_many(ftr)
+
+    def create_collection(self, collection: str):
+        self.__database.create_collection(collection)
+
+    def run_command(self, command: dict):
+        self.__database.command(command)

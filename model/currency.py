@@ -1,4 +1,7 @@
-class Currency:
+from model.base_model import BaseModel
+
+
+class Currency(BaseModel):
     def __init__(self, currency_code: str, value: float, historical_date: str, timestamp: str, friendly_name: str):
         self.currency_code = currency_code
         self.value = value
