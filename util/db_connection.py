@@ -29,6 +29,12 @@ class DatabaseConnection(metaclass=Singleton):
     def delete_many(self, collection: str, ftr: dict):
         self.__database.get_collection(collection).delete_many(ftr)
 
+    def select_one(self, collection: str, ftr: dict) -> dict:
+        return self.__database.get_collection(collection).find_one(ftr)
+
+    def select_many(self, collection: str, ftr: dict) -> [dict]:
+        return self.__database.get_collection(collection).find(ftr)
+
     def create_collection(self, collection: str):
         self.__database.create_collection(collection)
 

@@ -12,3 +12,8 @@ class Currency(BaseModel):
     def to_dict(self) -> dict:
         return {'currency_cod': self.currency_code, 'value': self.value, 'historical_date': self.historical_date,
                 'timestamp': self.timestamp, 'friendly_name': self.friendly_name}
+
+    @staticmethod
+    def from_dict(data: dict):
+        return Currency(data["currency_code"], data["value"], data["historical_date"], data["timestamp"],
+                        data["friendly_name"])
