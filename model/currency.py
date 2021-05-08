@@ -10,7 +10,7 @@ class Currency(BaseModel):
         self.friendly_name = friendly_name
 
     def to_dict(self) -> dict:
-        return {'currency_cod': self.currency_code, 'value': self.value, 'historical_date': self.historical_date,
+        return {'currency_code': self.currency_code, 'value': self.value, 'historical_date': self.historical_date,
                 'timestamp': self.timestamp, 'friendly_name': self.friendly_name}
 
     @staticmethod

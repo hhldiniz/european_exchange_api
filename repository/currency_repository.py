@@ -8,3 +8,12 @@ class CurrencyRepository:
 
     def get_all(self) -> [Currency]:
         self._currency_dao.select({})
+
+    def insert(self, *currency):
+        self._currency_dao.insert(*currency)
+
+    def delete(self, *currency):
+        self._currency_dao.delete(*currency)
+
+    def select_one(self, ftr: dict) -> Currency:
+        return self._currency_dao.select(ftr)

@@ -37,7 +37,7 @@ class CurrencyDao(BaseDao):
             print("CurrencyDao#update: Nothing to update")
 
     def select(self, ftr: dict) -> Currency:
-        self._db_connection.select_one(ftr)
+        return Currency.from_dict(self._db_connection.select_one(self.collection(), ftr))
 
     def schema(self) -> dict:
         return {

@@ -12,7 +12,7 @@ class DatabaseConnection(metaclass=Singleton):
         self.__database = self.__connection.get_database(DB_NAME)
 
     def insert(self, collection: str, data: dict):
-        self.__database.get_collection(collection).insert(data)
+        self.__database.get_collection(collection).insert_one(data)
 
     def insert_many(self, collection: str, data: [dict]):
         self.__database.get_collection(collection).insert_many(data)

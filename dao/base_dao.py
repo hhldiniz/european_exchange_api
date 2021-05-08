@@ -47,7 +47,8 @@ class BaseDao(ABC):
             if type(minimum) == int:
                 properties['minimum'] = minimum
 
-            if field.get('required') is True: required.append(field_key)
+            if field.get('required') is True:
+                required.append(field_key)
 
             validator['$jsonSchema']['properties'][field_key] = properties
 
