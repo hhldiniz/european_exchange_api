@@ -10,7 +10,9 @@ class Cache(BaseModel):
         self.timestamp = timestamp
 
     def from_dict(self, data: dict):
-        return Cache(data["is_valid"], data["timestamp"])
+        self.is_valid = data["is_valid"]
+        self.timestamp = data["timestamp"]
+        return self
 
     def to_dict(self) -> dict:
         return {"is_valid": self.is_valid, "timestamp": self.timestamp}

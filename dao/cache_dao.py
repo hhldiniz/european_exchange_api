@@ -8,18 +8,31 @@ class CacheDao(BaseDao):
 
     def insert(self, *cache: Cache):
         if cache.__len__() == 1:
-            self.db_connection.insert(self.collection(), cache[0].to_dict())
+            self.db_connection.insert(self.collection, cache[0].to_dict())
         elif cache.__len__() > 1:
-            self.db_connection.insert_many(self.collection(), list(map(lambda this_cache: this_cache.to_dict(), cache)))
+            self.db_connection.insert_many(self.collection, list(map(lambda this_cache: this_cache.to_dict(), cache)))
         else:
             print("CacheDao#insert: Nothing to insert")
 
     def delete(self, *cache: Cache):
-        pass
+        if cache.__len__() == 1:
+            self.db_connection.delete_one(self.collection,
+                                          {"is_valid": cache[0].is_valid, "timestamp": cache[0].timestamp})
+        elif cache.__len__() > 1:
+            self.db_connection.delete_many(self.collection, {'timestamp': {
+                                               "$set": list(map(lambda this_cache: this_cache.timestamp, cache))}})
 
     def update(self, *cache: Cache):
-        pass
+        raise NotImplemented
 
+    def select_one(self, ftr: dict) -> Cache:
+        return Cache().from_dict(self.db_connection.select_one(self.collection, ftr))
+
+    def select_many(self, ftr: dict) -> [Cache]:
+        return list(map(lambda obj: Cache(obj["is_valid"], obj["timestamp"]),
+                        self.db_connection.select_many(self.collection, ftr)))
+
+    @property
     def schema(self) -> dict:
         return {
             "is_valid": {
@@ -31,5 +44,6 @@ class CacheDao(BaseDao):
             }
         }
 
+    @property
     def collection(self) -> str:
         return "cache"

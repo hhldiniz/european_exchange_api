@@ -2,7 +2,8 @@ from model.base_model import BaseModel
 
 
 class Currency(BaseModel):
-    def __init__(self, currency_code: str, value: float, historical_date: str, timestamp: str, friendly_name: str):
+    def __init__(self, currency_code: str = "", value: float = 0, historical_date: str = "", timestamp: str = "",
+                 friendly_name: str = ""):
         self.currency_code = currency_code
         self.value = value
         self.historical_date = historical_date
@@ -14,5 +15,9 @@ class Currency(BaseModel):
                 'timestamp': self.timestamp, 'friendly_name': self.friendly_name}
 
     def from_dict(self, data: dict):
-        return Currency(data["currency_code"], data["value"], data["historical_date"], data["timestamp"],
-                        data["friendly_name"])
+        self.currency_code = data["currency_code"]
+        self.value = data["value"]
+        self.historical_date = data["historical_date"]
+        self.timestamp = data["timestamp"]
+        self.friendly_name = data["friendly_name"]
+        return self

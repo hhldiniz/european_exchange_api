@@ -8,27 +8,27 @@ class CurrencyDao(BaseDao):
 
     def insert(self, *currency: Currency):
         if currency.__len__() == 1:
-            self.db_connection.insert(self.collection(), currency[0].to_dict())
+            self.db_connection.insert(self.collection, currency[0].to_dict())
         elif currency.__len__() > 1:
-            self.db_connection.insert_many(self.collection(),
+            self.db_connection.insert_many(self.collection,
                                            list(map(lambda this_currency: this_currency.to_dict(), currency)))
         else:
             print("CurrencyDao#insert: Nothing to insert")
 
     def delete(self, *currency: Currency):
         if currency.__len__() == 1:
-            self.db_connection.delete_one(self.collection(), {'currency_code': currency[0].currency_code})
+            self.db_connection.delete_one(self.collection, {'currency_code': currency[0].currency_code})
         elif currency.__len__() > 1:
-            self.db_connection.delete_many(self.collection(),
+            self.db_connection.delete_many(self.collection,
                                            {'currency_code': {
-                                                "$set": list(map(lambda this_currency: this_currency.currency_code,
-                                                                 currency))}})
+                                               "$set": list(map(lambda this_currency: this_currency.currency_code,
+                                                                currency))}})
         else:
             print("CurrencyDao#delete: Nothing to delete")
 
     def update(self, *currency: Currency):
         if currency.__len__() == 1:
-            self.db_connection.update_one(self.collection(), {'currency_code': currency[0].currency_code},
+            self.db_connection.update_one(self.collection, {'currency_code': currency[0].currency_code},
                                           currency[0].to_dict())
         elif currency.__len__() > 1:
             for l_currency in currency:
@@ -36,8 +36,13 @@ class CurrencyDao(BaseDao):
         else:
             print("CurrencyDao#update: Nothing to update")
 
-    def select(self, ftr: dict) -> Currency:
-        return Currency.from_dict(self.db_connection.select_one(self.collection(), ftr))
+    def select_one(self, ftr: dict) -> Currency:
+        return Currency().from_dict(self.db_connection.select_one(self.collection, ftr))
+
+    def select_many(self, ftr: dict) -> [Currency]:
+        return list(
+            map(lambda obj: Currency(obj["currency_code"], obj["value"], obj["historical_date"], obj["timestamp"],
+                                     obj["friendly_name"]), self.db_connection.select_many(self.collection, ftr)))
 
     def schema(self) -> dict:
         return {

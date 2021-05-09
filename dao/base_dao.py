@@ -26,18 +26,28 @@ class BaseDao(ABC):
         self._validate()
 
     @abc.abstractmethod
+    def select_one(self, ftr: dict) -> BaseModel:
+        pass
+
+    @abc.abstractmethod
+    def select_many(self, ftr: dict) -> [BaseModel]:
+        pass
+
+    @abc.abstractmethod
+    @property
     def schema(self) -> dict:
         pass
 
     @abc.abstractmethod
+    @property
     def collection(self) -> str:
         pass
 
     def _validate(self):
         validator = {'$jsonSchema': {'bsonType': 'object', 'properties': {}}}
         required = []
-        user_schema = self.schema()
-        collection = self.collection()
+        user_schema = self.schema
+        collection = self.collection
 
         for field_key in user_schema:
             field = user_schema[field_key]
