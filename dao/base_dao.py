@@ -11,7 +11,7 @@ from util.db_connection import DatabaseConnection
 
 class BaseDao(ABC):
     def __init__(self):
-        self._db_connection = DatabaseConnection()
+        self.db_connection = DatabaseConnection()
 
     @abc.abstractmethod
     def insert(self, *model: BaseModel):
@@ -59,7 +59,7 @@ class BaseDao(ABC):
                  ('validator', validator)]
 
         try:
-            self._db_connection.create_collection(collection)
-            self._db_connection.run_command(OrderedDict(query))
+            self.db_connection.create_collection(collection)
+            self.db_connection.run_command(OrderedDict(query))
         except CollectionInvalid:
             raise SchemaValidationException
