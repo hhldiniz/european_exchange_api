@@ -1,5 +1,8 @@
+import datetime
 import os
 from xml.etree import ElementTree
+
+from pandas import DataFrame
 
 from dao.currency_dao import CurrencyDao
 from exceptions.no_cache_available_exception import NoCacheAvailableException
@@ -15,7 +18,10 @@ class CurrencyRepository:
     def __init__(self):
         self._currency_dao = CurrencyDao()
 
-    def get_all(self) -> [Currency]:
+    def get_all(self, base_currency_code: str) -> [Currency]:
+        base_currency_code = base_currency_code.upper()
+        currency_data = DataFrame()
+
         def request_remote_data() -> ElementTree:
             xml_file_path = os.path.join(constants.APP_ROOT, "history/static/content.xml")
             try:
@@ -27,13 +33,15 @@ class CurrencyRepository:
             return elementTree.parse(xml_file)
 
         def parse_xml_content(content: ElementTree) -> [Currency]:
-            res = []
             for item in content.getroot().find("Cube").findall("Cube"):
                 historical_date = item.get("time")
                 for subItem in item.findall("Cube"):
                     currency = Currency()
                     currency.currency_code = subItem.get("currency")
                     currency.historical_date = historical_date
+                    currency.timestamp = datetime.datetime.timestamp(datetime.datetime.now())
+                    currency.rate = subItem.get("rate")
+                    currency_data.append(currency.to_dict())
 
         cache_repository = CacheRepository()
         try:
