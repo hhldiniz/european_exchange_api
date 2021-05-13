@@ -34,12 +34,10 @@ class BaseDao(ABC):
         pass
 
     @abc.abstractmethod
-    @property
     def schema(self) -> dict:
         pass
 
     @abc.abstractmethod
-    @property
     def collection(self) -> str:
         pass
 
@@ -49,8 +47,8 @@ class BaseDao(ABC):
         user_schema = self.schema
         collection = self.collection
 
-        for field_key in user_schema:
-            field = user_schema[field_key]
+        for field_key in user_schema():
+            field = user_schema()[field_key]
             properties = {'bsonType': field['type']}
             minimum = field.get('minlength')
 
@@ -69,7 +67,7 @@ class BaseDao(ABC):
                  ('validator', validator)]
 
         try:
-            self.db_connection.create_collection(collection)
+            self.db_connection.create_collection(collection())
             self.db_connection.run_command(OrderedDict(query))
         except CollectionInvalid:
             raise SchemaValidationException

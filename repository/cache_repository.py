@@ -10,5 +10,5 @@ class CacheRepository:
     def get_valid_cache(self) -> Cache:
         try:
             return self._cache_dao.select_one({'is_valid': True})
-        except KeyError:
+        except TypeError:
             raise NoCacheAvailableException

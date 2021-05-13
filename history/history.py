@@ -15,4 +15,4 @@ def get_currency_history():
     symbol = request.args.get('symbol')
     currency_repository = CurrencyRepository()
 
-    return json.dumps(currency_repository.get_all())
+    return json.dumps(currency_repository.get_all(base))
