@@ -5,7 +5,7 @@ from model.base_model import BaseModel
 
 class Cache(BaseModel):
     def __init__(self, is_valid: bool = True,
-                 timestamp: str = str(datetime.datetime.timestamp(datetime.datetime.now()))):
+                 timestamp: float = datetime.datetime.timestamp(datetime.datetime.now())):
         self.is_valid = is_valid
         self.timestamp = timestamp
 

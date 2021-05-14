@@ -44,6 +44,7 @@ class CurrencyDao(BaseDao):
             map(lambda obj: Currency(obj["currency_code"], obj["value"], obj["historical_date"], obj["timestamp"],
                                      obj["friendly_name"]), self.db_connection.select_many(self.collection, ftr)))
 
+    @property
     def schema(self) -> dict:
         return {
             'currency_code': {
@@ -76,5 +77,6 @@ class CurrencyDao(BaseDao):
             }
         }
 
+    @property
     def collection(self) -> str:
         return "currency"

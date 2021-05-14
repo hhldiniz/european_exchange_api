@@ -18,9 +18,10 @@ from repository.cache_repository import CacheRepository
 class CurrencyRepository:
     def __init__(self):
         self._currency_dao = CurrencyDao()
+        self._cache_repository = CacheRepository()
 
     @staticmethod
-    def request_remote_data() -> ElementTree:
+    def _request_remote_data() -> ElementTree:
         xml_file_path = os.path.join(constants.APP_ROOT, "history/static/content.xml")
         try:
             xml_file = open(xml_file_path, "r")
@@ -31,8 +32,7 @@ class CurrencyRepository:
         return elementTree.parse(xml_file)
 
     @staticmethod
-    def parse_xml_content(content: ElementTree) -> DataFrame:
-        currency_data = DataFrame()
+    def _parse_xml_content(content: ElementTree) -> [Currency]:
         currency_list = []
 
         for item in content.getroot().iter():
@@ -47,22 +47,33 @@ class CurrencyRepository:
             if rate is not None:
                 currency.rate = rate
             currency.timestamp = datetime.datetime.timestamp(datetime.datetime.now())
-            currency_list.append(currency.to_dict())
-        return currency_data.append(currency_list)
+            currency_list.append(currency)
+        return currency_list
+
+    @staticmethod
+    def _populate_dataframe(currency_list: [Currency]) -> DataFrame:
+        return DataFrame(list(map(lambda currency: currency.to_dict(), currency_list)))
 
     def get_all(self, base_currency_code: str) -> [Currency]:
         base_currency_code = base_currency_code.upper()
 
-        cache_repository = CacheRepository()
         try:
-            if not cache_repository.get_valid_cache().is_valid:
-                currency_data_frame = self.parse_xml_content(self.request_remote_data())
+            if not self._cache_repository.get_valid_cache().is_valid:
+                currency_data = self._parse_xml_content(self._request_remote_data())
+                currency_data_frame = self._populate_dataframe(currency_data)
+                self._update_cache_data(currency_data)
                 return currency_data_frame
             else:
                 return self._currency_dao.select_many({})
         except NoCacheAvailableException:
-            currency_data_frame = self.parse_xml_content(self.request_remote_data())
+            currency_data = self._parse_xml_content(self._request_remote_data())
+            self._update_cache_data(currency_data)
+            currency_data_frame = self._populate_dataframe(currency_data)
             return currency_data_frame
+
+    def _update_cache_data(self, currency_data: [Currency]):
+        self._cache_repository.update_cache()
+        self._currency_dao.insert(*currency_data)
 
     def insert(self, *currency):
         self._currency_dao.insert(*currency)
