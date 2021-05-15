@@ -20,13 +20,21 @@ class CacheDao(BaseDao):
                                           {"is_valid": cache[0].is_valid, "timestamp": cache[0].timestamp})
         elif cache.__len__() > 1:
             self.db_connection.delete_many(self.collection, {'timestamp': {
-                                               "$set": list(map(lambda this_cache: this_cache.timestamp, cache))}})
+                "$set": list(map(lambda this_cache: this_cache.timestamp, cache))}})
 
     def update(self, *cache: Cache):
-        raise NotImplemented
+        if cache.__len__() == 1:
+            self.db_connection.find_and_update(self.collection, {'timestamp': cache[0].timestamp},
+                                               {"$set": cache[0].to_dict()})
+        elif cache.__len__() > 1:
+            self.db_connection.update_many(self.collection, {
+                'timestamp': {"$set": list(map(lambda this_cache: this_cache.timestamp, cache))}})
+        else:
+            print("CacheDao#update: Nothing to update")
 
     def select_one(self, ftr: dict) -> Cache:
-        return Cache().from_dict(self.db_connection.select_one(self.collection, ftr))
+        cache = self.db_connection.select_one(self.collection, ftr)
+        return Cache().from_dict(cache) if cache is not None else Cache()
 
     def select_many(self, ftr: dict) -> [Cache]:
         return list(map(lambda obj: Cache(obj["is_valid"], obj["timestamp"]),

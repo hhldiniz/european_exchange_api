@@ -1,17 +1,15 @@
 import datetime
 import os
+import xml.etree.ElementTree as elementTree
 from xml.etree import ElementTree
 
 from pandas import DataFrame
-from sklearn import preprocessing
+from requests import get
 
+import constants
 from dao.currency_dao import CurrencyDao
 from exceptions.no_cache_available_exception import NoCacheAvailableException
 from model.currency import Currency
-from requests import get
-import xml.etree.ElementTree as elementTree
-
-import constants
 from repository.cache_repository import CacheRepository
 
 
@@ -36,18 +34,21 @@ class CurrencyRepository:
         currency_list = []
 
         for item in content.getroot().iter():
-            currency = Currency()
             time = item.get("time")
-            currency_code = item.get("currency")
-            rate = item.get("rate")
             if time is not None:
-                currency.historical_date = time
-            if currency_code is not None:
-                currency.currency_code = currency_code
-            if rate is not None:
-                currency.rate = rate
-            currency.timestamp = datetime.datetime.timestamp(datetime.datetime.now())
-            currency_list.append(currency)
+                for currency_xml_obj in item:
+                    currency = Currency()
+                    currency_code = currency_xml_obj.get("currency")
+                    rate = currency_xml_obj.get("rate")
+                    if time is not None:
+                        currency.historical_date = time
+                    if currency_code is not None:
+                        currency.currency_code = currency_code
+                    if rate is not None:
+                        currency.rate = float(rate)
+                    currency.timestamp = datetime.datetime.timestamp(datetime.datetime.now())
+                    currency.friendly_name = currency_code
+                    currency_list.append(currency)
         return currency_list
 
     @staticmethod
@@ -57,19 +58,13 @@ class CurrencyRepository:
     def get_all(self, base_currency_code: str) -> [Currency]:
         base_currency_code = base_currency_code.upper()
 
-        try:
-            if not self._cache_repository.get_valid_cache().is_valid:
-                currency_data = self._parse_xml_content(self._request_remote_data())
-                currency_data_frame = self._populate_dataframe(currency_data)
-                self._update_cache_data(currency_data)
-                return currency_data_frame
-            else:
-                return self._currency_dao.select_many({})
-        except NoCacheAvailableException:
+        if not self._cache_repository.get_valid_cache().is_valid:
             currency_data = self._parse_xml_content(self._request_remote_data())
-            self._update_cache_data(currency_data)
             currency_data_frame = self._populate_dataframe(currency_data)
+            self._update_cache_data(currency_data)
             return currency_data_frame
+        else:
+            return self._currency_dao.select_many({})
 
     def _update_cache_data(self, currency_data: [Currency]):
         self._cache_repository.update_cache()

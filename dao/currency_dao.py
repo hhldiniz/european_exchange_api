@@ -1,3 +1,5 @@
+from bson import ObjectId
+
 from dao.base_dao import BaseDao
 from model.currency import Currency
 
@@ -7,6 +9,7 @@ class CurrencyDao(BaseDao):
         super().__init__()
 
     def insert(self, *currency: Currency):
+        super().insert(*currency)
         if currency.__len__() == 1:
             self.db_connection.insert(self.collection, currency[0].to_dict())
         elif currency.__len__() > 1:
@@ -16,6 +19,7 @@ class CurrencyDao(BaseDao):
             print("CurrencyDao#insert: Nothing to insert")
 
     def delete(self, *currency: Currency):
+        super().delete(*currency)
         if currency.__len__() == 1:
             self.db_connection.delete_one(self.collection, {'currency_code': currency[0].currency_code})
         elif currency.__len__() > 1:
@@ -27,6 +31,7 @@ class CurrencyDao(BaseDao):
             print("CurrencyDao#delete: Nothing to delete")
 
     def update(self, *currency: Currency):
+        super().update(*currency)
         if currency.__len__() == 1:
             self.db_connection.update_one(self.collection, {'currency_code': currency[0].currency_code},
                                           currency[0].to_dict())
@@ -55,7 +60,7 @@ class CurrencyDao(BaseDao):
                 'nullable': False,
                 'unique': True
             },
-            'value': {
+            'rate': {
                 'type': 'double',
                 'required': True,
                 'nullable': False,
@@ -66,7 +71,7 @@ class CurrencyDao(BaseDao):
                 'nullable': False
             },
             'timestamp': {
-                'type': 'string',
+                'type': 'timestamp',
                 'required': True,
                 'nullable': False
             },
