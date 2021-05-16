@@ -71,7 +71,7 @@ class CurrencyDao(BaseDao):
                 'nullable': False
             },
             'timestamp': {
-                'type': 'timestamp',
+                'type': 'double',
                 'required': True,
                 'nullable': False
             },

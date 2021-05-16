@@ -8,7 +8,6 @@ from requests import get
 
 import constants
 from dao.currency_dao import CurrencyDao
-from exceptions.no_cache_available_exception import NoCacheAvailableException
 from model.currency import Currency
 from repository.cache_repository import CacheRepository
 

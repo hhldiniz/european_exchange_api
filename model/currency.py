@@ -2,7 +2,7 @@ from model.base_model import BaseModel
 
 
 class Currency(BaseModel):
-    def __init__(self, currency_code: str = "", rate: float = 0, historical_date: str = "", timestamp: str = "",
+    def __init__(self, currency_code: str = "", rate: float = 0, historical_date: str = "", timestamp: float = 0,
                  friendly_name: str = ""):
         self.currency_code = currency_code
         self.rate = rate
