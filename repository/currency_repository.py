@@ -61,9 +61,17 @@ class CurrencyRepository:
             currency_data = self._parse_xml_content(self._request_remote_data())
             currency_data_frame = self._populate_dataframe(currency_data)
             self._update_cache_data(currency_data)
-            return currency_data_frame
+            return self.normalize_by_base(base_currency_code, currency_data_frame)
         else:
-            return self._currency_dao.select_many({})
+            data = self._currency_dao.select_many({})
+            return list(map(lambda currency_dict: Currency().from_dict(currency_dict), data))
+
+    @staticmethod
+    def normalize_by_base(base_currency_code: str, currency_dataframe: DataFrame):
+        column_maxes = currency_dataframe.max(index=base_currency_code)
+        df_max = column_maxes.max()
+        normalized_df = currency_dataframe / df_max
+        return normalized_df
 
     def _update_cache_data(self, currency_data: [Currency]):
         self._cache_repository.update_cache()
