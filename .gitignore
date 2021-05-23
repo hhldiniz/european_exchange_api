@@ -1,2 +1,8 @@
+# database access
 /database_access.py
+
+# environments
 .env
+
+# log
+*.log
