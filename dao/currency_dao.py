@@ -1,5 +1,3 @@
-from bson import ObjectId
-
 from dao.base_dao import BaseDao
 from model.currency import Currency
 

@@ -3,6 +3,7 @@ import json
 from flask import Blueprint, request
 
 from repository.currency_repository import CurrencyRepository
+from util.json_encoder import MyJsonEncoder
 
 history_bp = Blueprint("history", __name__, static_folder="static")
 
@@ -15,4 +16,4 @@ def get_currency_history():
     symbol = request.args.get('symbol')
     currency_repository = CurrencyRepository()
 
-    return json.dumps(currency_repository.get_all(base))
+    return json.dumps(currency_repository.get_all(base), cls=MyJsonEncoder)
