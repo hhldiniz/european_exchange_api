@@ -15,4 +15,4 @@ if __name__ == "__main__":
     if Config.SERVER_ENV.value == "TEST":
         app.run("localhost", 8080)
     else:
-        serve(app, host='0.0.0.0', port=80)
+        serve(app, host='0.0.0.0', port=8080)
