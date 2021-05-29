@@ -44,7 +44,7 @@ class CurrencyDao(BaseDao):
 
     def select_many(self, ftr: dict) -> [Currency]:
         return list(
-            map(lambda obj: Currency(obj["currency_code"], obj["value"], obj["historical_date"], obj["timestamp"],
+            map(lambda obj: Currency(obj["currency_code"], obj["rate"], obj["historical_date"], obj["timestamp"],
                                      obj["friendly_name"]), self.db_connection.select_many(self.collection, ftr)))
 
     @property
