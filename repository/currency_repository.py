@@ -48,11 +48,11 @@ class CurrencyRepository:
                             symbols: [[str], None]):
         def check_currency(currency: Currency) -> bool:
             symbols_condition = currency.currency_code in symbols if symbols else True
-            start_at_condition = datetime.datetime.strptime(currency.historical_date, "YYYY-MM-DD"
-                                                            ) >= datetime.datetime.strptime(start_at, "YYYY-MM-DD"
+            start_at_condition = datetime.datetime.strptime(currency.historical_date, "%Y-%M-%d"
+                                                            ) >= datetime.datetime.strptime(start_at, "%Y-%M-%d"
                                                                                             ) if start_at else True
-            end_at_condition = datetime.datetime.strptime(currency.historical_date, "YYYY-MM-DD") <= datetime. \
-                datetime.strptime(end_at, "YYYY-MM-DD") if end_at else True
+            end_at_condition = datetime.datetime.strptime(currency.historical_date, "%Y-%M-%d") <= datetime. \
+                datetime.strptime(end_at, "%Y-%M-%d") if end_at else True
             return symbols_condition and start_at_condition and end_at_condition
 
         return list(filter(lambda currency: check_currency(currency), currency_data))
