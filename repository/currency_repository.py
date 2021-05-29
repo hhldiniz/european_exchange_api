@@ -19,19 +19,13 @@ class CurrencyRepository:
 
     @staticmethod
     def _request_remote_data() -> ElementTree:
-        xml_file_path = os.path.join(constants.APP_ROOT, "history/static/content.xml")
-        try:
-            xml_file = open(xml_file_path, "r")
-        except FileNotFoundError:
-            xml_file = open(xml_file_path, "w")
-            res = get(constants.history_all_time_url)
-            xml_file.write(res.content.decode("utf-8"))
-        return elementTree.parse(xml_file)
+        res = get(constants.history_all_time_url)
+        return elementTree.fromstring(res.content.decode("utf-8"))
 
     @staticmethod
     def _parse_xml_content(content: ElementTree) -> [Currency]:
         currency_list = []
-        for item in content.getroot().iter():
+        for item in content.iter():
             time = item.get("time")
             if time is not None:
                 for currency_xml_obj in item:
