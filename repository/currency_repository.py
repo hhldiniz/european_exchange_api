@@ -74,8 +74,7 @@ class CurrencyRepository:
                 filters['end_at'] = {'$lte': end_at}
             if symbols:
                 filters['symbols'] = {'$in': symbols}
-            data = self._currency_dao.select_many(filters)
-            return list(map(lambda currency_dict: Currency().from_dict(currency_dict), data))
+            return self._currency_dao.select_many(filters)
 
     @staticmethod
     def normalize_by_base(base_currency_code: str, currency_data: [Currency]) -> Generator[Currency]:
