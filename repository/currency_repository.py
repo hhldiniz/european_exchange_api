@@ -3,6 +3,7 @@ import xml.etree.ElementTree as elementTree
 from collections import Generator
 from xml.etree import ElementTree
 
+import pymongo
 from requests import get
 
 import constants
@@ -94,10 +95,11 @@ class CurrencyRepository:
     def get_latest(self, symbol: str) -> Currency:
         cache = self._verify_and_update_cache()
         if cache[0]:
-            return self.__filter_local_list(cache[1], datetime.datetime.now().strftime("%Y-%M-%d"),
+            return self.__filter_local_list(cache[1],
+                                            (datetime.datetime.now() - datetime.timedelta(days=1)).strftime("%Y-%M-%d"),
                                             datetime.datetime.now().strftime("%Y-%M-%d"), [symbol])[0]
         else:
-            return self._currency_dao.select_one({"symbols": symbol})
+            return self._currency_dao.select_one({"symbols": symbol}, ("historical_data", pymongo.DESCENDING))
 
     def insert(self, *currency):
         self._currency_dao.insert(*currency)

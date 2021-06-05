@@ -31,7 +31,11 @@ class DatabaseConnection(metaclass=Singleton):
     def delete_many(self, collection: str, ftr: dict):
         self.__database.get_collection(collection).delete_many(ftr)
 
-    def select_one(self, collection: str, ftr: dict) -> dict:
+    def select_one(self, collection: str, ftr: dict, sort_by: [list[tuple], tuple, str, None] = None) -> dict:
+        if type(sort_by) is list or type(sort_by) is str:
+            return self.__database.get_collection(collection).find_one(ftr).sort(sort_by)
+        if type(sort_by) is tuple:
+            return self.__database.get_collection(collection).find_one(ftr).sort(sort_by[0], sort_by[1])
         return self.__database.get_collection(collection).find_one(ftr)
 
     def select_many(self, collection: str, ftr: dict) -> [dict]:

@@ -39,8 +39,8 @@ class CurrencyDao(BaseDao):
         else:
             print("CurrencyDao#update: Nothing to update")
 
-    def select_one(self, ftr: dict) -> Currency:
-        return Currency().from_dict(self.db_connection.select_one(self.collection, ftr))
+    def select_one(self, ftr: dict, sort_by: [list[tuple], tuple, str, None] = None) -> Currency:
+        return Currency().from_dict(self.db_connection.select_one(self.collection, ftr, sort_by))
 
     def select_many(self, ftr: dict) -> [Currency]:
         return list(

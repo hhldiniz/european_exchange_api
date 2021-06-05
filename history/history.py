@@ -24,4 +24,4 @@ def get_currency_latest():
     if symbol is None:
         return json.dumps({"error": "Missing argument"}), 400
     currency_repository = CurrencyRepository()
-    return json.dumps(currency_repository.get_latest(symbol))
+    return json.dumps(currency_repository.get_latest(symbol), cls=MyJsonEncoder)
