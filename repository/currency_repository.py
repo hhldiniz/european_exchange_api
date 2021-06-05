@@ -1,5 +1,4 @@
 import datetime
-import os
 import xml.etree.ElementTree as elementTree
 from collections import Generator
 from xml.etree import ElementTree
@@ -45,7 +44,7 @@ class CurrencyRepository:
 
     @staticmethod
     def __filter_local_list(currency_data: [Currency], start_at: [str, None], end_at: [str, None],
-                            symbols: [[str], None]):
+                            symbols: [[str], None]) -> [Currency]:
         def check_currency(currency: Currency) -> bool:
             symbols_condition = currency.currency_code in symbols if symbols else True
             start_at_condition = datetime.datetime.strptime(currency.historical_date, "%Y-%M-%d"
@@ -57,14 +56,30 @@ class CurrencyRepository:
 
         return list(filter(lambda currency: check_currency(currency), currency_data))
 
+    def _verify_and_update_cache(self) -> tuple[bool, [list, None]]:
+        if not self._cache_repository.get_valid_cache().is_valid:
+            currency_data = self._parse_xml_content(self._request_remote_data())
+            self._cache_repository.update_cache()
+            self._currency_dao.insert(*currency_data)
+            return True, currency_data
+        return False, None
+
+    @staticmethod
+    def normalize_by_base(base_currency_code: str, currency_data: [Currency]) -> Generator[Currency]:
+        base_currency = list(filter(lambda l_currency: l_currency.currency_code == base_currency_code, currency_data))[
+            0]
+        for currency in currency_data:
+            currency.rate = currency.rate / base_currency.rate
+            yield currency
+
     def get_all(self, base_currency_code: str, start_at: [str, None], end_at: [str, None], symbols: [[str], None]) -> \
             [Currency]:
         base_currency_code = base_currency_code.upper()
 
-        if not self._cache_repository.get_valid_cache().is_valid:
-            currency_data = self._parse_xml_content(self._request_remote_data())
-            self._update_cache_data(currency_data)
-            return self.__filter_local_list(list(self.normalize_by_base(base_currency_code, currency_data)), start_at,
+        cache = self._verify_and_update_cache()
+
+        if cache[0]:
+            return self.__filter_local_list(list(self.normalize_by_base(base_currency_code, cache[1])), start_at,
                                             end_at, symbols)
         else:
             filters = {}
@@ -76,17 +91,13 @@ class CurrencyRepository:
                 filters['symbols'] = {'$in': symbols}
             return self._currency_dao.select_many(filters)
 
-    @staticmethod
-    def normalize_by_base(base_currency_code: str, currency_data: [Currency]) -> Generator[Currency]:
-        base_currency = list(filter(lambda l_currency: l_currency.currency_code == base_currency_code, currency_data))[
-            0]
-        for currency in currency_data:
-            currency.rate = currency.rate / base_currency.rate
-            yield currency
-
-    def _update_cache_data(self, currency_data: [Currency]):
-        self._cache_repository.update_cache()
-        self._currency_dao.insert(*currency_data)
+    def get_latest(self, symbol: str) -> Currency:
+        cache = self._verify_and_update_cache()
+        if cache[0]:
+            return self.__filter_local_list(cache[1], datetime.datetime.now().strftime("%Y-%M-%d"),
+                                            datetime.datetime.now().strftime("%Y-%M-%d"), [symbol])[0]
+        else:
+            return self._currency_dao.select_one({"symbols": symbol})
 
     def insert(self, *currency):
         self._currency_dao.insert(*currency)

@@ -16,3 +16,12 @@ def get_currency_history():
     currency_repository = CurrencyRepository()
 
     return json.dumps(currency_repository.get_all(base, start_at, end_at, symbols), cls=MyJsonEncoder)
+
+
+@history_bp.route("/latest")
+def get_currency_latest():
+    symbol = request.args.get("symbol")
+    if symbol is None:
+        return json.dumps({"error": "Missing argument"}), 400
+    currency_repository = CurrencyRepository()
+    return json.dumps(currency_repository.get_latest(symbol))
