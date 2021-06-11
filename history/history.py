@@ -1,6 +1,7 @@
 import json
 from flask import Blueprint, request
 
+from logger import Logger
 from repository.currency_repository import CurrencyRepository
 from util.json_encoder import MyJsonEncoder
 
@@ -9,6 +10,7 @@ history_bp = Blueprint("history", __name__, static_folder="static")
 
 @history_bp.route("/history")
 def get_currency_history():
+    Logger.i("Request /history")
     start_at = request.args.get('start_at')
     end_at = request.args.get('end_at')
     base = request.args.get('base')
@@ -20,6 +22,7 @@ def get_currency_history():
 
 @history_bp.route("/latest")
 def get_currency_latest():
+    Logger.i("Request /latest")
     symbol = request.args.get("symbol")
     if symbol is None:
         return json.dumps({"error": "Missing argument"}), 400

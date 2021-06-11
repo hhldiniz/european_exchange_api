@@ -1,6 +1,7 @@
 import pymongo
 
 from config import Config
+from logger import Logger
 from util.server_env import ServerEnv
 from util.singleton import Singleton
 
@@ -45,13 +46,17 @@ class DatabaseConnection(metaclass=Singleton):
         return self.__database.get_collection(collection).find_one(ftr)
 
     def select_many(self, collection: str, ftr: dict) -> [dict]:
+        Logger.i(f"DatabaseConnection#select_many -> select_many from {collection} collection")
         return self.__database.get_collection(collection).find(ftr)
 
     def create_collection(self, collection: str):
+        Logger.i(f"DatabaseConnection#create_collection -> Creating collection with name {collection}")
         self.__database.create_collection(collection)
 
     def run_command(self, command: dict):
+        Logger.i(f"DatabaseConnection#run_command -> Running command: {command}")
         self.__database.command(command)
 
     def find_and_update(self, collection: str, condition: dict, data: dict):
+        Logger.i(f"DatabaseConnection#find_and_update -> Finding and updating collection {collection}")
         self.__database.get_collection(collection).find_one_and_update(condition, data)
