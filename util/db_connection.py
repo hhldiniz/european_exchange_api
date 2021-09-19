@@ -1,18 +1,13 @@
-import pymongo
+from pymongo import MongoClient
 
-from config import Config
 from logger import Logger
-from util.server_env import ServerEnv
+from util.providers.database_provider import get_provider
 from util.singleton import Singleton
 
 
 class DatabaseConnection(metaclass=Singleton):
     def __init__(self):
-        self.__connection = pymongo.MongoClient(
-            f"mongodb+srv://{Config.DB_USER.value   }:{Config.DB_PASSWORD.value}@exhange-api-cluster.yufz9.mongodb.net/"
-            "myFirstDatabase?retryWrites=true&w=majority" if Config.SERVER_ENV.value == ServerEnv.PRODUCTION.value else
-            f"mongodb://localhost:27017/euroapi")
-        self.__database = self.__connection.get_database(Config.DB_NAME.value)
+        self.__database: MongoClient = get_provider().get_database()
 
     def insert(self, collection: str, data: dict):
         self.__database.get_collection(collection).insert_one(data)
