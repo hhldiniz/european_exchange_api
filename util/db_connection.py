@@ -1,3 +1,5 @@
+import inspect
+
 from pymongo import MongoClient
 
 from logger import Logger
@@ -49,7 +51,11 @@ class DatabaseConnection(metaclass=Singleton):
         self.__database.create_collection(collection)
 
     def run_command(self, command: dict):
-        Logger.i(f"DatabaseConnection#run_command -> Running command: {command}")
+        all_stack_frames = inspect.stack()
+        caller_stack_frame = all_stack_frames[1]
+        caller_name = caller_stack_frame[3]
+
+        Logger.i(f"DatabaseConnection#run_command -> Running command passed by {caller_name}")
         self.__database.command(command)
 
     def find_and_update(self, collection: str, condition: dict, data: dict):
