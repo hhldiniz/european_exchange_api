@@ -6,3 +6,4 @@
 
 # log
 *.log
+/vagrant/.vagrant/
