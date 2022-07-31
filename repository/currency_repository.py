@@ -1,6 +1,6 @@
 import datetime
 import xml.etree.ElementTree as elementTree
-from collections import Generator
+from typing import Generator
 from xml.etree import ElementTree
 
 import pymongo
@@ -77,7 +77,7 @@ class CurrencyRepository:
         return False, None
 
     @staticmethod
-    def normalize_by_base(base_currency_code: str, currency_data: [Currency]) -> Generator[Currency]:
+    def normalize_by_base(base_currency_code: str, currency_data: [Currency]) -> Generator[Currency, None, None]:
         Logger.i("CurrencyRepository#_verify_and_update_cache -> Normalizing currency data")
         base_currency = list(filter(lambda l_currency: l_currency.currency_code == base_currency_code, currency_data))[
             0]
