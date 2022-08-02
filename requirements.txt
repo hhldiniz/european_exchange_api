@@ -5,6 +5,7 @@ cffi
 chardet
 click
 cryptography
+dnspython
 Flask
 gunicorn
 idna
