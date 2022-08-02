@@ -1,8 +1,3 @@
-variable "example_app_name" {
-  description = "App name"
-  default = "exchange-api"
-}
-
 terraform {
   required_providers {
     heroku = {
@@ -13,6 +8,27 @@ terraform {
 }
 
 resource "heroku_app" "european-exchange-api" {
-  name   = var.example_app_name
-  region = "us"
+  buildpacks            = ["heroku/python"]
+  config_vars           = {}
+  internal_routing      = false
+  name                  = var.app_name
+  region                = "us"
+  stack                 = "heroku-22"
+  sensitive_config_vars = {
+    "DB_NAME" : var.db_name, "DB_USER" : var.db_username, "DB_PASSWORD" : var.db_password,
+    "ENVIRONMENT" : var.stacks["PROD"]
+  }
+}
+
+resource "heroku_app" "european-exchange-api-staging" {
+  buildpacks            = ["heroku/python"]
+  config_vars           = {}
+  internal_routing      = false
+  name                  = var.app_name_staging
+  region                = "us"
+  stack                 = "heroku-22"
+  sensitive_config_vars = {
+    "DB_NAME" : var.db_name, "DB_USER" : var.db_username, "DB_PASSWORD" : var.db_password,
+    "ENVIRONMENT" : var.stacks["PROD"]
+  }
 }

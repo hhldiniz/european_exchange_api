@@ -6,4 +6,4 @@
 
 # log
 *.log
-/vagrant/.vagrant/
+/terraform/secrets.tfvars
