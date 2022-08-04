@@ -23,6 +23,7 @@ def get_currency_history():
 @history_bp.route("/latest")
 def get_currency_latest():
     Logger.i("Request /latest")
+    Logger.i(f"Params: {request.args}")
     symbol = request.args.get("symbol")
     if symbol is None:
         return json.dumps({"error": "Missing argument"}), 400
