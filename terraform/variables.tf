@@ -1,35 +1,29 @@
-variable "app_name" {
-  description = "App name"
-  default     = "european-exchange-api"
+variable "resource_group_name_prefix" {
+  default     = "rg"
+  description = "Prefix of the resource group name that's combined with a random ID so name is unique in your Azure subscription."
 }
 
-variable "app_name_staging" {
-  description = "Staging app name"
-  default = "european-exchange-api-staging"
+variable "resource_group_location" {
+  default     = "eastus"
+  description = "Location of the resource group."
 }
 
-variable "db_username" {
-  type        = string
-  description = "Database Username for Exchange Api Server"
-  sensitive   = true
+variable "subscription_id" {
+  type = string
+  sensitive = true
 }
 
-variable "db_password" {
-  type        = string
-  description = "Database Password for Exchange Api Server"
-  sensitive   = true
+variable "client_id" {
+  type = string
+  sensitive = true
 }
 
-variable "db_name" {
-  type        = string
-  description = "Database name"
-  sensitive   = true
+variable "client_secret" {
+  type = string
+  sensitive = true
 }
 
-variable "stacks" {
-  type        = map(string)
-  description = "Available stacks"
-  default     = {
-    "PROD" : "PROD"
-  }
+variable "tenant_id" {
+  type = string
+  sensitive = true
 }
