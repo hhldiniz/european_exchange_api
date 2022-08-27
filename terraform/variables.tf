@@ -27,3 +27,8 @@ variable "tenant_id" {
   type = string
   sensitive = true
 }
+
+variable "app_name" {
+  type = string
+  default = "european-exchange-api"
+}
