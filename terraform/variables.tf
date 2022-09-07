@@ -65,5 +65,5 @@ variable "api_db_cluster_name" {
 
 variable "mongo_cluster_region" {
   type = string
-  default = "southamerica-east1)"
+  default = "SOUTH_AMERICA_EAST_1"
 }
