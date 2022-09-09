@@ -16,7 +16,7 @@ resource "azurerm_service_plan" "european_exchange_api_service_plan" {
   resource_group_name = local.resource_group_name
   location            = var.resource_group_location
   os_type             = "Linux"
-  sku_name            = "B1"
+  sku_name            = "F1"
 }
 
 resource "azurerm_linux_web_app" "european_exchange_api_web_app" {
