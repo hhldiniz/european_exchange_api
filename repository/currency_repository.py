@@ -51,7 +51,11 @@ class CurrencyRepository:
     @staticmethod
     def __filter_local_list(currency_data: [Currency], start_at: [str, None], end_at: [str, None],
                             symbols: [[str], None]) -> [Currency]:
-        Logger.i("CurrencyRepository#__filter_local_list -> Applying local data filter")
+        currencies_as_string = str(currency_data)
+        Logger.i(
+            f"CurrencyRepository#__filter_local_list -> Applying local data filter with params: "
+            f"start_at = {start_at}, end_at = {end_at}, symbols = {symbols}")
+        print(currencies_as_string)
 
         def check_currency(currency: Currency) -> bool:
             symbols_condition = currency.currency_code in symbols if symbols else True
@@ -78,7 +82,8 @@ class CurrencyRepository:
 
     @staticmethod
     def normalize_by_base(base_currency_code: str, currency_data: [Currency]) -> Generator[Currency, None, None]:
-        Logger.i("CurrencyRepository#_verify_and_update_cache -> Normalizing currency data")
+        Logger.i(f"CurrencyRepository#_verify_and_update_cache -> Normalizing currency data with params: "
+                 f"base_currency_code = {base_currency_code}, currency_data = {currency_data}")
         base_currency = list(filter(lambda l_currency: l_currency.currency_code == base_currency_code, currency_data))[
             0]
         for currency in currency_data:
@@ -93,11 +98,15 @@ class CurrencyRepository:
         cache = self._verify_and_update_cache()
 
         if cache[0]:
-            Logger.i("CurrencyRepository#get_all -> Retrieving data remotely")
+            Logger.i("CurrencyRepository#get_all -> Retrieving data remotely with params: ")
+            Logger.i(f"base_currency_code = {base_currency_code}, "
+                     f"start_at = {start_at}, end_at = {end_at}, symbols = {symbols}")
             return self.__filter_local_list(list(self.normalize_by_base(base_currency_code, cache[1])), start_at,
                                             end_at, symbols)
         else:
             Logger.i("CurrencyRepository#get_all -> Retrieving data locally")
+            Logger.i(f"base_currency_code = {base_currency_code}, "
+                     f"start_at = {start_at}, end_at = {end_at}, symbols = {symbols}")
             filters = {}
             if start_at:
                 filters['start_at'] = {'$gte': start_at}
@@ -110,19 +119,23 @@ class CurrencyRepository:
     def get_latest(self, symbol: str) -> Currency:
         cache = self._verify_and_update_cache()
         if cache[0]:
-            Logger.i("CurrencyRepository#get_all -> Retrieving data remotely")
+            Logger.i(f"CurrencyRepository#latest -> Retrieving data remotely with params: symbol = {symbol}")
             return self.__filter_local_list(cache[1],
                                             (datetime.datetime.now() - datetime.timedelta(days=1)).strftime("%Y-%M-%d"),
                                             datetime.datetime.now().strftime("%Y-%M-%d"), [symbol])[0]
         else:
-            Logger.i("CurrencyRepository#get_all -> Retrieving data locally")
+            Logger.i(f"CurrencyRepository#latest -> Retrieving data locally with params: symbol = {symbol}")
             return self._currency_dao.select_one({"symbols": symbol}, ("historical_data", pymongo.DESCENDING))
 
     def insert(self, *currency):
+        Logger.i(f"CurrencyRepository#insert -> Inserting objects: {[*currency]}")
         self._currency_dao.insert(*currency)
 
     def delete(self, *currency):
+        Logger.i(f"CurrencyRepository#delete -> Deleting objects: {[*currency]}")
         self._currency_dao.delete(*currency)
 
     def select_one(self, ftr: dict) -> Currency:
+        Logger.i(f"CurrencyRepository#select_one -> Retrieving one object with filter ")
+        print(ftr)
         return self._currency_dao.select_one(ftr)

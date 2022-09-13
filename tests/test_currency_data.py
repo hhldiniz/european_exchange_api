@@ -1,25 +1,34 @@
+import unittest
 from datetime import datetime
+from unittest.mock import MagicMock
+
+from pymongo.results import InsertOneResult, DeleteResult
 
 from model.currency import Currency
 from repository.currency_repository import CurrencyRepository
 
-mock_currency = Currency(
-        "USD",
-        1,
-        "2020-01-01",
-        str(datetime.timestamp(datetime.now())),
-        "American Dolar"
-    )
-currency_repository = CurrencyRepository()
 
+class TestCurrencyData(unittest.TestCase):
 
-def test_currency_insert():
-    currency_repository.insert(mock_currency)
-    currency_repository.delete(mock_currency)
+    def setUp(self) -> None:
+        self.currency_repository = CurrencyRepository()
+        self.mock_currency = Currency(
+            "USD",
+            1,
+            "2020-01-01",
+            datetime.timestamp(datetime.now()),
+            "American Dolar"
+        )
+        self.currency_repository.insert = MagicMock(return_value=InsertOneResult(1, True))
+        self.currency_repository.delete = MagicMock(return_value=DeleteResult({"1": ""}, True))
+        self.currency_repository.select_one = MagicMock(return_value=self.mock_currency)
 
+    def test_currency_insert(self):
+        assert isinstance(self.currency_repository.insert(self.mock_currency), InsertOneResult)
+        assert isinstance(self.currency_repository.delete(self.mock_currency), DeleteResult)
 
-def test_currency_select():
-    currency_repository.insert(mock_currency)
-    res = currency_repository.select_one({'currency_code': mock_currency.currency_code})
-    currency_repository.delete(mock_currency)
-    assert isinstance(res, Currency)
+    def test_currency_select(self):
+        self.currency_repository.insert(self.mock_currency)
+        res = self.currency_repository.select_one({'currency_code': self.mock_currency.currency_code})
+        self.currency_repository.delete(self.mock_currency)
+        assert isinstance(res, Currency)

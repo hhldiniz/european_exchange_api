@@ -1,3 +1,5 @@
+import json
+
 from model.base_model import BaseModel
 
 
@@ -15,9 +17,26 @@ class Currency(BaseModel):
                 'timestamp': self.timestamp, 'friendly_name': self.friendly_name}
 
     def from_dict(self, data: dict):
+        self.__validate_dict(data)
         self.currency_code = data["currency_code"]
         self.rate = data["rate"]
         self.historical_date = data["historical_date"]
         self.timestamp = data["timestamp"]
         self.friendly_name = data["friendly_name"]
         return self
+
+    @staticmethod
+    def __validate_dict(data: dict):
+        if not ("currency_code" in data
+                or "rate" in data
+                or "historical_date" in data
+                or "timestamp" in data
+                or "friendly_name" in data):
+            raise ValueError(
+                f"Dict doesn't contain all the information needed to parse as Currency model. Current dict: {data}")
+
+    def __str__(self):
+        return self.to_dict()
+
+    def __repr__(self):
+        return json.dumps(self.to_dict())
