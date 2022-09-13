@@ -136,5 +136,6 @@ class CurrencyRepository:
         self._currency_dao.delete(*currency)
 
     def select_one(self, ftr: dict) -> Currency:
-        Logger.i(f"CurrencyRepository#select_one -> Retrieving one object with filter {ftr}")
+        Logger.i(f"CurrencyRepository#select_one -> Retrieving one object with filter ")
+        print(ftr)
         return self._currency_dao.select_one(ftr)
