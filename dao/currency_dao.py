@@ -1,3 +1,7 @@
+from typing import Generator
+
+from pymongo.results import InsertManyResult, DeleteResult, UpdateResult, InsertOneResult
+
 from dao.base_dao import BaseDao
 from model.currency import Currency
 
@@ -6,33 +10,36 @@ class CurrencyDao(BaseDao):
     def __init__(self):
         super().__init__()
 
-    def insert(self, *currency: Currency):
+    def insert(self, *currency: Currency) -> [InsertOneResult, InsertManyResult, None]:
         super().insert(*currency)
         if currency.__len__() == 1:
-            self.db_connection.insert(self.collection, currency[0].to_dict())
+            return self.db_connection.insert(self.collection, currency[0].to_dict())
         elif currency.__len__() > 1:
-            self.db_connection.insert_many(self.collection,
-                                           list(map(lambda this_currency: this_currency.to_dict(), currency)))
+            return self.db_connection.insert_many(self.collection,
+                                                  list(map(lambda this_currency: this_currency.to_dict(), currency)))
         else:
             print("CurrencyDao#insert: Nothing to insert")
+            return None
 
-    def delete(self, *currency: Currency):
+    def delete(self, *currency: Currency) -> [DeleteResult, None]:
         super().delete(*currency)
         if currency.__len__() == 1:
-            self.db_connection.delete_one(self.collection, {'currency_code': currency[0].currency_code})
+            return self.db_connection.delete_one(self.collection, {'currency_code': currency[0].currency_code})
         elif currency.__len__() > 1:
-            self.db_connection.delete_many(self.collection,
-                                           {'currency_code': {
-                                               "$set": list(map(lambda this_currency: this_currency.currency_code,
-                                                                currency))}})
+            return self.db_connection.delete_many(self.collection,
+                                                  {'currency_code': {
+                                                      "$set": list(
+                                                          map(lambda this_currency: this_currency.currency_code,
+                                                              currency))}})
         else:
             print("CurrencyDao#delete: Nothing to delete")
+            return None
 
-    def update(self, *currency: Currency):
+    def update(self, *currency: Currency) -> Generator[UpdateResult, None, None]:
         super().update(*currency)
         if currency.__len__() == 1:
-            self.db_connection.update_one(self.collection, {'currency_code': currency[0].currency_code},
-                                          currency[0].to_dict())
+            yield self.db_connection.update_one(self.collection, {'currency_code': currency[0].currency_code},
+                                                currency[0].to_dict())
         elif currency.__len__() > 1:
             for l_currency in currency:
                 self.update(l_currency)

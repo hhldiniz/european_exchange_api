@@ -1,35 +1,69 @@
+variable "resource_group_name_prefix" {
+  default     = "rg"
+  description = "Prefix of the resource group name that's combined with a random ID so name is unique in your Azure subscription."
+}
+
+variable "resource_group_location" {
+  default     = "brazilsouth"
+  description = "Location of the resource group."
+}
+
+variable "subscription_id" {
+  type = string
+  sensitive = true
+}
+
+variable "client_id" {
+  type = string
+  sensitive = true
+}
+
+variable "client_secret" {
+  type = string
+  sensitive = true
+}
+
+variable "tenant_id" {
+  type = string
+  sensitive = true
+}
+
 variable "app_name" {
-  description = "App name"
-  default     = "european-exchange-api"
+  type = string
+  default = "european-exchange-api"
 }
 
-variable "app_name_staging" {
-  description = "Staging app name"
-  default = "european-exchange-api-staging"
+variable "mongodbatlas_public_key" {
+  type = string
+  sensitive = true
 }
 
-variable "db_username" {
-  type        = string
-  description = "Database Username for Exchange Api Server"
-  sensitive   = true
+variable "mongodbatlas_private_key" {
+  type = string
+  sensitive = true
 }
 
-variable "db_password" {
-  type        = string
-  description = "Database Password for Exchange Api Server"
-  sensitive   = true
+variable "mongo_db_user" {
+  type = string
+  sensitive = true
 }
 
-variable "db_name" {
-  type        = string
-  description = "Database name"
-  sensitive   = true
+variable "mongo_db_password" {
+  type = string
+  sensitive = true
 }
 
-variable "stacks" {
-  type        = map(string)
-  description = "Available stacks"
-  default     = {
-    "PROD" : "PROD"
-  }
+variable "mongo_organization_id" {
+  type = string
+  sensitive = true
+}
+
+variable "api_db_cluster_name" {
+  type = string
+  default = "exhange-api-cluster"
+}
+
+variable "mongo_cluster_region" {
+  type = string
+  default = "SOUTH_AMERICA_EAST_1"
 }

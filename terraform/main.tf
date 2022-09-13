@@ -1,34 +1,31 @@
-terraform {
-  required_providers {
-    heroku = {
-      source  = "heroku/heroku"
-      version = "~> 5.0"
-    }
-  }
+locals {
+  resource_group_name = azurerm_resource_group.rg.name
 }
 
-resource "heroku_app" "european-exchange-api" {
-  buildpacks            = ["heroku/python"]
-  config_vars           = {}
-  internal_routing      = false
-  name                  = var.app_name
-  region                = "us"
-  stack                 = "heroku-22"
-  sensitive_config_vars = {
-    "DB_NAME" : var.db_name, "DB_USER" : var.db_username, "DB_PASSWORD" : var.db_password,
-    "ENVIRONMENT" : var.stacks["PROD"]
-  }
+resource "random_pet" "rg_name" {
+  prefix = var.resource_group_name_prefix
 }
 
-resource "heroku_app" "european-exchange-api-staging" {
-  buildpacks            = ["heroku/python"]
-  config_vars           = {}
-  internal_routing      = false
-  name                  = var.app_name_staging
-  region                = "us"
-  stack                 = "heroku-22"
-  sensitive_config_vars = {
-    "DB_NAME" : var.db_name, "DB_USER" : var.db_username, "DB_PASSWORD" : var.db_password,
-    "ENVIRONMENT" : var.stacks["PROD"]
+resource "azurerm_resource_group" "rg" {
+  name     = random_pet.rg_name.id
+  location = var.resource_group_location
+}
+
+resource "azurerm_service_plan" "european_exchange_api_service_plan" {
+  name                = var.app_name
+  resource_group_name = local.resource_group_name
+  location            = var.resource_group_location
+  os_type             = "Linux"
+  sku_name            = "F1"
+}
+
+resource "azurerm_linux_web_app" "european_exchange_api_web_app" {
+  name                = var.app_name
+  resource_group_name = local.resource_group_name
+  location            = var.resource_group_location
+  service_plan_id     = azurerm_service_plan.european_exchange_api_service_plan.id
+
+  site_config {
+    always_on         = false
   }
 }

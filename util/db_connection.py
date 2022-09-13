@@ -1,6 +1,7 @@
 import inspect
 
 from pymongo import MongoClient
+from pymongo.results import InsertOneResult, InsertManyResult, UpdateResult, DeleteResult
 
 from logger import Logger
 from util.providers.database_provider import get_provider
@@ -11,38 +12,38 @@ class DatabaseConnection(metaclass=Singleton):
     def __init__(self):
         self.__database: MongoClient = get_provider().get_database()
 
-    def insert(self, collection: str, data: dict):
+    def insert(self, collection: str, data: dict) -> InsertOneResult:
         Logger.i(f"DatabaseConnection#insert -> Inserting on object in collection {collection}")
         print(f"data = {data}")
-        self.__database.get_collection(collection).insert_one(data)
+        return self.__database.get_collection(collection).insert_one(data)
 
-    def insert_many(self, collection: str, data: [dict]):
+    def insert_many(self, collection: str, data: [dict]) -> InsertManyResult:
         Logger.i(f"DatabaseConnection#insert_many -> "
                  f"Inserting multiple objects in collection {collection}")
         print(f"data = {data}")
-        self.__database.get_collection(collection).insert_many(data)
+        return self.__database.get_collection(collection).insert_many(data)
 
-    def update_one(self, collection: str, condition: dict, data: dict):
+    def update_one(self, collection: str, condition: dict, data: dict) -> UpdateResult:
         Logger.i(f"DatabaseConnection#update_one -> "
                  f"Updating one object in collection {collection} with condition {condition}")
         print(f"data = {data}")
-        self.__database.get_collection(collection).replace_one(condition, data)
+        return self.__database.get_collection(collection).replace_one(condition, data)
 
-    def update_many(self, collection: str, condition: dict, data: dict):
+    def update_many(self, collection: str, condition: dict, data: dict) -> UpdateResult:
         Logger.i(f"DatabaseConnection#update_many -> Updating many objects in collection "
                  f"{collection} with condition {condition}")
         print(f"data = {data}")
-        self.__database.get_collection(collection).update_many(condition, data)
+        return self.__database.get_collection(collection).update_many(condition, data)
 
-    def delete_one(self, collection: str, ftr: dict):
+    def delete_one(self, collection: str, ftr: dict) -> DeleteResult:
         Logger.i(f"DatabaseConnection#delete_one -> Deleting one object from collection {collection}")
         print(f"ftr = {ftr}")
-        self.__database.get_collection(collection).delete_one(ftr)
+        return self.__database.get_collection(collection).delete_one(ftr)
 
-    def delete_many(self, collection: str, ftr: dict):
+    def delete_many(self, collection: str, ftr: dict) -> DeleteResult:
         Logger.i(f"DatabaseConnection#delete_many -> Deleting many objects from collection {collection}")
         print(f"ftr = {ftr}")
-        self.__database.get_collection(collection).delete_many(ftr)
+        return self.__database.get_collection(collection).delete_many(ftr)
 
     def select_one(self, collection: str, ftr: dict, sort_by: [list[tuple], tuple, str, None] = None) -> [dict, None]:
         Logger.i(f"DatabaseConnection#select_one -> Finding a single object with params: "
