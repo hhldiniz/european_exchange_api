@@ -32,5 +32,14 @@ resource "azurerm_linux_web_app" "european_exchange_api_web_app" {
     application_stack {
       python_version = "3.9"
     }
+
   }
+}
+
+resource "azurerm_app_service_source_control" "sourcecontrol" {
+  app_id             = azurerm_linux_web_app.european_exchange_api_web_app.id
+  repo_url           = "https://github.com/hhldiniz/european_exchange_api"
+  branch             = "master"
+  use_manual_integration = false
+  use_mercurial      = false
 }
