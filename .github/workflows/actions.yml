@@ -44,12 +44,7 @@ jobs:
         - name: Test with pytest
           run: |
             pytest
-    Deploy:
-      if: github.ref == 'refs/heads/master'
-      runs-on: ubuntu-latest
-      needs: [lint, test]
-      steps:
-        - uses: actions/checkout@v3
+
     Terraform:
       name: 'Terraform'
       runs-on: ubuntu-latest
