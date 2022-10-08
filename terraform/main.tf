@@ -24,7 +24,9 @@ resource "azurerm_linux_web_app" "european_exchange_api_web_app" {
   resource_group_name = local.resource_group_name
   location            = var.resource_group_location
   service_plan_id     = azurerm_service_plan.european_exchange_api_service_plan.id
-
+  app_settings = {
+    "SCM_DO_BUILD_DURING_DEPLOYMENT" = true
+  }
 
   site_config {
     always_on         = false
