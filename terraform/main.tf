@@ -24,10 +24,17 @@ resource "azurerm_linux_web_app" "european_exchange_api_web_app" {
   resource_group_name = local.resource_group_name
   location            = var.resource_group_location
   service_plan_id     = azurerm_service_plan.european_exchange_api_service_plan.id
-
+  app_settings = {
+    "SCM_DO_BUILD_DURING_DEPLOYMENT" = true
+  }
+  logs {
+    application_logs {
+      file_system_level = var.log_level
+    }
+  }
 
   site_config {
-    always_on         = false
+    always_on        = false
     app_command_line = "gunicorn --bind 0.0.0.0 wsgi:app"
 
     application_stack {
@@ -38,13 +45,13 @@ resource "azurerm_linux_web_app" "european_exchange_api_web_app" {
 }
 
 resource "azurerm_app_service_source_control" "sourcecontrol" {
-  app_id             = azurerm_linux_web_app.european_exchange_api_web_app.id
-  repo_url           = "https://github.com/hhldiniz/european_exchange_api"
-  branch             = "master"
+  app_id                 = azurerm_linux_web_app.european_exchange_api_web_app.id
+  repo_url               = "https://github.com/hhldiniz/european_exchange_api"
+  branch                 = "master"
   use_manual_integration = false
   use_mercurial          = false
   github_action_configuration {
-      generate_workflow_file = true
+    generate_workflow_file = true
   }
 
   timeouts {}
