@@ -28,6 +28,7 @@ resource "azurerm_linux_web_app" "european_exchange_api_web_app" {
 
   site_config {
     always_on         = false
+    app_command_line = "gunicorn --bind 0.0.0.0 wsgi:app"
 
     application_stack {
       python_version = "3.9"
