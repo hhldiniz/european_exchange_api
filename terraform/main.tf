@@ -41,5 +41,11 @@ resource "azurerm_app_service_source_control" "sourcecontrol" {
   repo_url           = "https://github.com/hhldiniz/european_exchange_api"
   branch             = "master"
   use_manual_integration = false
-  use_mercurial      = false
+  use_mercurial          = false
+  github_action_configuration {
+      generate_workflow_file = true
+  }
+
+  timeouts {}
+
 }
