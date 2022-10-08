@@ -8,6 +8,10 @@ variable "resource_group_location" {
   description = "Location of the resource group."
 }
 
+variable "log_level" {
+  default = "Verbose"
+}
+
 variable "subscription_id" {
   type = string
   sensitive = true
