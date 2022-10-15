@@ -12,6 +12,10 @@ variable "log_level" {
   default = "Verbose"
 }
 
+variable "log_retention_days" {
+  default = 7
+}
+
 variable "subscription_id" {
   type = string
   sensitive = true

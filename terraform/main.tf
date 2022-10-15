@@ -26,6 +26,8 @@ resource "azurerm_linux_web_app" "european_exchange_api_web_app" {
   service_plan_id     = azurerm_service_plan.european_exchange_api_service_plan.id
   app_settings = {
     "SCM_DO_BUILD_DURING_DEPLOYMENT" = true
+    "WEBSITE_HTTPLOGGING_RETENTION_DAYS" = var.log_retention_days
+    "ENVIRONMENT" = "PRODUCTION"
   }
   logs {
     application_logs {
