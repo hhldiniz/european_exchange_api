@@ -28,10 +28,19 @@ resource "azurerm_linux_web_app" "european_exchange_api_web_app" {
     "SCM_DO_BUILD_DURING_DEPLOYMENT" = true
     "WEBSITE_HTTPLOGGING_RETENTION_DAYS" = var.log_retention_days
     "ENVIRONMENT" = "PRODUCTION"
+    "DB_USER" = var.mongo_db_user
+    "DB_PASSWORD" = var.mongo_db_password
+    "DB_NAME" = var.api_db_cluster_name
   }
   logs {
     application_logs {
       file_system_level = var.log_level
+    }
+    http_logs {
+      file_system {
+        retention_in_days = var.log_retention_days
+        retention_in_mb = 35
+      }
     }
   }
 
