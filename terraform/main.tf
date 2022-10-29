@@ -33,6 +33,12 @@ resource "azurerm_linux_web_app" "european_exchange_api_web_app" {
     application_logs {
       file_system_level = var.log_level
     }
+    http_logs {
+      file_system {
+        retention_in_days = var.log_retention_days
+        retention_in_mb = 35
+      }
+    }
   }
 
   site_config {
