@@ -75,3 +75,13 @@ variable "mongo_cluster_region" {
   type = string
   default = "SOUTH_AMERICA_EAST_1"
 }
+
+variable "render_api_key" {
+  type = string
+  sensitive = true
+}
+
+variable "render_owner_id" {
+  type = string
+  sensitive = true
+}

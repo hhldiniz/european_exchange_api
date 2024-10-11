@@ -2,12 +2,12 @@ terraform {
   required_version = ">=0.12"
 
   required_providers {
-    azurerm = {
-      source  = "hashicorp/azurerm"
-      version = "~>3.0"
+    render = {
+      source  = "render-oss/render"
+      version = "1.3.0"
     }
     mongodbatlas = {
-      source = "mongodb/mongodbatlas"
+      source  = "mongodb/mongodbatlas"
       version = "~>1.4.0"
     }
   }
@@ -20,6 +20,12 @@ terraform {
   }
 }
 
+provider "render" {
+  api_key = var.render_api_key
+  owner_id = var.render_owner_id
+  wait_for_deploy_completion = true
+}
+
 provider "azurerm" {
   features {}
   subscription_id = var.subscription_id
@@ -29,6 +35,6 @@ provider "azurerm" {
 }
 
 provider "mongodbatlas" {
-  public_key = var.mongodbatlas_public_key
-  private_key  = var.mongodbatlas_private_key
+  public_key  = var.mongodbatlas_public_key
+  private_key = var.mongodbatlas_private_key
 }
