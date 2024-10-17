@@ -1,6 +1,6 @@
 locals {
   project_dependencies_folder = "./project_dependencies"
-  get_currencies_lambda_source_path = "./${local.project_dependencies_folder}/currency/get_currencies.zip"
+  get_currencies_lambda_source_path = "./${local.project_dependencies_folder}/get_currencies.zip"
 }
 
 module "lambda_get_currencies" {
