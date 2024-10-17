@@ -13,3 +13,7 @@ variable "lambda_function_handler" {
 variable "lambda_function_runtime_type" {
   type = string
 }
+
+variable "lambda_iam_role_arn" {
+  type = string
+}

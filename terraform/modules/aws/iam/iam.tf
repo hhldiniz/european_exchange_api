@@ -11,7 +11,7 @@ data "aws_iam_policy_document" "aws_trust_policy" {
 
 resource "aws_iam_role" "lambda_role" {
   assume_role_policy = data.aws_iam_policy_document.aws_trust_policy.json
-  name = "default-lambda_role"
+  name = var.role_name
 }
 
 resource "aws_iam_role_policy_attachment" "lambda_policy" {
