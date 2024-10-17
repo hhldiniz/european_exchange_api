@@ -38,12 +38,17 @@ variable "mongo_cluster_region" {
   default = "SOUTH_AMERICA_EAST_1"
 }
 
-variable "render_api_key" {
+variable "aws_region" {
+  type = string
+  default = "sa-east-1"
+}
+
+variable "aws_access_key" {
   type = string
   sensitive = true
 }
 
-variable "render_owner_id" {
+variable "aws_secret_key" {
   type = string
   sensitive = true
 }

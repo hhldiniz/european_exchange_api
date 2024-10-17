@@ -2,13 +2,13 @@ terraform {
   required_version = ">=0.12"
 
   required_providers {
-    render = {
-      source  = "render-oss/render"
-      version = "1.3.0"
-    }
     mongodbatlas = {
       source  = "mongodb/mongodbatlas"
       version = "~>1.4.0"
+    }
+    aws = {
+      source = "hashicorp/aws"
+      version = "5.72.0"
     }
   }
 
@@ -20,10 +20,10 @@ terraform {
   }
 }
 
-provider "render" {
-  api_key = var.render_api_key
-  owner_id = var.render_owner_id
-  wait_for_deploy_completion = true
+provider "aws" {
+  region = var.aws_region
+  access_key = var.aws_access_key
+  secret_key = var.aws_secret_key
 }
 
 provider "mongodbatlas" {

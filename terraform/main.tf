@@ -1,49 +1,19 @@
-resource "render_web_service" "web" {
-  name               = var.app_name
-  plan               = "starter"
-  region             = "oregon"
-  start_command      = "python main.py"
-  pre_deploy_command = "echo 'Starting deploy...'"
+locals {
+  project_dependencies_folder = "./project_dependencies"
+  get_currencies_lambda_source_path = "./${local.project_dependencies_folder}/currency/get_currencies.zip"
+}
 
-  runtime_source = {
-    native_runtime = {
-      auto_deploy   = true
-      branch        = "master"
-      build_command = "pip install -r requirements.txt"
-      build_filter = {
-        paths         = ["src/**"]
-        ignored_paths = ["tests/**"]
-      }
-      repo_url = "https://github.com/hhldiniz/european_exchange_api.git"
-      runtime  = "python"
-    }
-  }
+module "lambda_get_currencies" {
+  source = "./modules/aws"
+  lambda_function_filename = local.get_currencies_lambda_source_path
+  lambda_function_handler = "get_currencies"
+  lambda_function_name = "${var.app_name}-get_currencies"
+  lambda_function_runtime_type = "python3.10"
+  depends_on = [data.archive_file.zip_lambda_get_currencies]
+}
 
-  disk = {
-    name       = "storage-disk"
-    size_gb    = 1
-    mount_path = "/data"
-  }
-
-  env_vars = {
-    "key1" = { value = "val1" },
-    "key2" = { value = "val2" },
-  }
-  secret_files = {
-    "file1" = { content = "content1" },
-    "file2" = { content = "content2" },
-  }
-  custom_domains = [
-    { name : "terraform-provider-1.example.com" },
-    { name : "terraform-provider-2.example.com" },
-  ]
-
-  notification_override = {
-    preview_notifications_enabled = "false"
-    notifications_to_send         = "failure"
-  }
-
-  log_stream_override = {
-    setting = "drop"
-  }
+data "archive_file" "zip_lambda_get_currencies" {
+  output_path = local.get_currencies_lambda_source_path
+  type        = "zip"
+  source_dir = "${local.project_dependencies_folder}/currency"
 }
