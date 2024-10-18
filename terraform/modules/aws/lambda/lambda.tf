@@ -4,5 +4,6 @@ resource "aws_lambda_function" "function" {
   filename = var.lambda_function_filename
   handler = var.lambda_function_handler
   runtime = var.lambda_function_runtime_type
+  layers = var.layers
   source_code_hash = filebase64sha256(var.lambda_function_filename)
 }

@@ -17,3 +17,7 @@ variable "lambda_function_runtime_type" {
 variable "lambda_iam_role_arn" {
   type = string
 }
+
+variable "layers" {
+  type = list(string)
+}
