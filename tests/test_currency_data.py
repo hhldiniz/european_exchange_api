@@ -4,8 +4,8 @@ from unittest.mock import MagicMock
 
 from pymongo.results import InsertOneResult, DeleteResult
 
-from model.currency import Currency
-from repository.currency_repository import CurrencyRepository
+from terraform.project_dependencies.common.python.model.currency import Currency
+from terraform.project_dependencies.common.python.repository.currency_repository import CurrencyRepository
 
 
 class TestCurrencyData(unittest.TestCase):
