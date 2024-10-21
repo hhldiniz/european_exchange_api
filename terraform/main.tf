@@ -1,70 +1,75 @@
 locals {
-  resource_group_name = azurerm_resource_group.rg.name
+  project_dependencies_folder       = "./project_dependencies"
+  get_currencies_lambda_file_name = "get_currencies.zip"
+  get_currency_history_file_name = "get_currency_history.zip"
+  common_layer_file_name = "common_layer.zip"
+  dependencies_instalation_folder = "${local.project_dependencies_folder}/common/python"
+  get_currencies_lambda_source_path = "./${local.project_dependencies_folder}/${local.get_currencies_lambda_file_name}"
+  get_currency_history_lambda_source_path = "./${local.project_dependencies_folder}/${local.get_currency_history_file_name}"
+  common_lambda_layer_source_path   = "./${local.project_dependencies_folder}/${local.common_layer_file_name}"
+  lambda_runtime = "python3.10"
+  modules = ["common", "currency"]
 }
 
-resource "random_pet" "rg_name" {
-  prefix = var.resource_group_name_prefix
+module "lambda_iam_role" {
+  source    = "./modules/aws/iam"
+  role_name = "default-lambda-role"
 }
 
-resource "azurerm_resource_group" "rg" {
-  name     = random_pet.rg_name.id
-  location = var.resource_group_location
+module "lambda_get_currencies" {
+  source                       = "./modules/aws/lambda"
+  lambda_function_filename     = data.archive_file.zip_lambda_get_currencies.output_path
+  lambda_function_handler      = "currency.get_currencies_lambda_handler"
+  lambda_function_name         = "${var.app_name}-get_currencies"
+  lambda_function_runtime_type = local.lambda_runtime
+  lambda_iam_role_arn          = module.lambda_iam_role.iam_role_arn
+  layers = [module.common_layer.layer_arn]
+  depends_on = [data.archive_file.zip_lambda_get_currencies, module.common_layer]
 }
 
-resource "azurerm_service_plan" "european_exchange_api_service_plan" {
-  name                = var.app_name
-  resource_group_name = local.resource_group_name
-  location            = var.resource_group_location
-  os_type             = "Linux"
-  sku_name            = "F1"
+module "lambda_get_currency_history" {
+  source = "./modules/aws/lambda"
+  lambda_function_filename     = data.archive_file.zip_lambda_get_currency_history.output_path
+  lambda_function_handler      = "history.get_history_lambda_handler"
+  lambda_function_name         = "${var.app_name}-get_currency_history"
+  lambda_function_runtime_type = local.lambda_runtime
+  lambda_iam_role_arn          = module.lambda_iam_role.iam_role_arn
+  layers = [module.common_layer.layer_arn]
+  depends_on = [data.archive_file.zip_lambda_get_currency_history, module.common_layer]
 }
 
-resource "azurerm_linux_web_app" "european_exchange_api_web_app" {
-  name                = var.app_name
-  resource_group_name = local.resource_group_name
-  location            = var.resource_group_location
-  service_plan_id     = azurerm_service_plan.european_exchange_api_service_plan.id
-  app_settings = {
-    "SCM_DO_BUILD_DURING_DEPLOYMENT" = true
-    "WEBSITE_HTTPLOGGING_RETENTION_DAYS" = var.log_retention_days
-    "ENVIRONMENT" = "PRODUCTION"
-    "DB_USER" = var.mongo_db_user
-    "DB_PASSWORD" = var.mongo_db_password
-    "DB_NAME" = var.api_db_cluster_name
+module "common_layer" {
+  source                = "./modules/aws/lambda_layer"
+  lambda_layer_filename = data.archive_file.zip_common_lambda_layer.output_path
+  lambda_layer_name     = "CommonLayer"
+  depends_on = [data.archive_file.zip_common_lambda_layer]
+}
+
+data "archive_file" "zip_lambda_get_currencies" {
+  output_path = local.get_currencies_lambda_source_path
+  type        = "zip"
+  source_dir  = "${local.project_dependencies_folder}/currency"
+}
+
+data "archive_file" "zip_lambda_get_currency_history" {
+  output_path = local.get_currency_history_lambda_source_path
+  type        = "zip"
+  source_dir = "${local.project_dependencies_folder}/history"
+}
+
+data "archive_file" "zip_common_lambda_layer" {
+  output_path = local.common_lambda_layer_source_path
+  type        = "zip"
+  source_dir  = "${local.project_dependencies_folder}/common"
+  depends_on = [null_resource.install_external_dependencies]
+}
+
+resource "null_resource" "install_external_dependencies" {
+  for_each = toset(local.modules)
+  triggers = {
+        always_run = timestamp()
   }
-  logs {
-    application_logs {
-      file_system_level = var.log_level
-    }
-    http_logs {
-      file_system {
-        retention_in_days = var.log_retention_days
-        retention_in_mb = 35
-      }
-    }
+  provisioner "local-exec" {
+    command = "pip install -r ${local.project_dependencies_folder}/${each.value}/requirements.txt --target ${local.dependencies_instalation_folder}"
   }
-
-  site_config {
-    always_on        = false
-    app_command_line = "gunicorn --bind 0.0.0.0 wsgi:app"
-
-    application_stack {
-      python_version = "3.9"
-    }
-
-  }
-}
-
-resource "azurerm_app_service_source_control" "sourcecontrol" {
-  app_id                 = azurerm_linux_web_app.european_exchange_api_web_app.id
-  repo_url               = "https://github.com/hhldiniz/european_exchange_api"
-  branch                 = "master"
-  use_manual_integration = false
-  use_mercurial          = false
-  github_action_configuration {
-    generate_workflow_file = true
-  }
-
-  timeouts {}
-
 }
