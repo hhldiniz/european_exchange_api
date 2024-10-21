@@ -1,11 +1,11 @@
 import json
 from typing import Optional, Any, List
 
+from action import Action
 from logger import Logger
 from repository.currency_repository import CurrencyRepository
-from terraform.project_dependencies.common.python.util.response import Response, ResponseCodes, CommonHeaders
-from terraform.project_dependencies.history.action import Action
 from util.json_encoder import MyJsonEncoder
+from util.response import CommonHeaders, ResponseCodes, Response
 
 
 def get_history_lambda_handler(event: dict, _: Optional[dict]) -> dict[str, Any]:

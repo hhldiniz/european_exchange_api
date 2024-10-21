@@ -67,7 +67,7 @@ data "archive_file" "zip_common_lambda_layer" {
 resource "null_resource" "install_external_dependencies" {
   for_each = toset(local.modules)
   triggers = {
-        "requirementsHash" : filebase64sha256("${local.project_dependencies_folder}/${each.value}/requirements.txt")
+        always_run = timestamp()
   }
   provisioner "local-exec" {
     command = "pip install -r ${local.project_dependencies_folder}/${each.value}/requirements.txt --target ${local.dependencies_instalation_folder}"
