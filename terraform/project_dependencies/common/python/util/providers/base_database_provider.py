@@ -2,7 +2,7 @@ import abc
 
 from pymongo import MongoClient
 
-from terraform.project_dependencies.common.python.config import Config
+from common.python.config import Config
 
 
 class BaseDatabaseProvider(abc.ABC):

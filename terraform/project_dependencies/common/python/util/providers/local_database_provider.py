@@ -1,7 +1,7 @@
 import pymongo
 from pymongo import MongoClient
 
-from terraform.project_dependencies.common.python.util.providers.base_database_provider import BaseDatabaseProvider
+from common.python.util.providers.base_database_provider import BaseDatabaseProvider
 
 
 class LocalDatabaseProvider(BaseDatabaseProvider):

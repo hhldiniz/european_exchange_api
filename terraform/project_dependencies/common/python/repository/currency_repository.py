@@ -6,11 +6,11 @@ from xml.etree import ElementTree
 import pymongo
 from requests import get
 
-from terraform.project_dependencies.common.python import constants
-from terraform.project_dependencies.common.python.dao.currency_dao import CurrencyDao
-from terraform.project_dependencies.common.python.logger import Logger
-from terraform.project_dependencies.common.python.model.currency import Currency
-from terraform.project_dependencies.common.python.repository.cache_repository import CacheRepository
+from common.python import constants
+from common.python.dao.currency_dao import CurrencyDao
+from common.python.logger import Logger
+from common.python.model.currency import Currency
+from common.python.repository.cache_repository import CacheRepository
 
 
 class CurrencyRepository:

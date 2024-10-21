@@ -1,7 +1,7 @@
 from datetime import datetime
 
-from terraform.project_dependencies.common.python.dao.cache_dao import CacheDao
-from terraform.project_dependencies.common.python.model import Cache
+from common.python.dao.cache_dao import CacheDao
+from common.python.model.cache import Cache
 
 
 class CacheRepository:
