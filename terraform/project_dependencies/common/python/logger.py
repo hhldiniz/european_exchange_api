@@ -1,6 +1,6 @@
 from loguru import logger
 
-from terraform.project_dependencies.common.python.util.singleton import Singleton
+from python.util.singleton import Singleton
 
 
 class Logger(metaclass=Singleton):

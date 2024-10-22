@@ -2,7 +2,7 @@ import abc
 
 from pymongo import MongoClient
 
-from common.python.config import Config
+from python.config import Config
 
 
 class BaseDatabaseProvider(abc.ABC):

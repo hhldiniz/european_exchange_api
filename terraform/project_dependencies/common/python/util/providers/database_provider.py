@@ -1,7 +1,7 @@
-from common.python.config import Config
-from common.python.util.providers.local_database_provider import LocalDatabaseProvider
-from common.python.util.providers.remote_database_provider import RemoteDatabaseProvider
-from common.python.util.server_env import ServerEnv
+from python.config import Config
+from python.util.providers.local_database_provider import LocalDatabaseProvider
+from python.util.providers.remote_database_provider import RemoteDatabaseProvider
+from python.util.server_env import ServerEnv
 
 
 def get_provider():

@@ -2,10 +2,10 @@ from typing import Any, Optional
 
 import requests
 
-from terraform.project_dependencies.common.python import constants
+from python import constants
 
-from terraform.project_dependencies.common.python.logger import Logger
-from terraform.project_dependencies.common.python.util.response import Response, CommonHeaders
+from python.logger import Logger
+from python.util.response import Response, CommonHeaders
 
 
 def get_currencies_lambda_handler(event: dict, context: Optional[dict]) -> dict[str, Any]:

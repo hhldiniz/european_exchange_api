@@ -4,10 +4,10 @@ from collections import OrderedDict
 
 from pymongo.errors import CollectionInvalid, BulkWriteError
 
-from terraform.project_dependencies.common.python.exceptions.schema_validation_exception import SchemaValidationException
-from terraform.project_dependencies.common.python.logger import Logger
-from terraform.project_dependencies.common.python.model.base_model import BaseModel
-from terraform.project_dependencies.common.python.util.db_connection import DatabaseConnection
+from python.exceptions.schema_validation_exception import SchemaValidationException
+from python.logger import Logger
+from python.model.base_model import BaseModel
+from python.util.db_connection import DatabaseConnection
 
 
 class BaseDao(ABC):

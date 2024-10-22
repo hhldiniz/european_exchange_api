@@ -6,11 +6,11 @@ from xml.etree import ElementTree
 import pymongo
 from requests import get
 
-from common.python import constants
-from common.python.dao.currency_dao import CurrencyDao
-from common.python.logger import Logger
-from common.python.model.currency import Currency
-from common.python.repository.cache_repository import CacheRepository
+from python import constants
+from python.dao.currency_dao import CurrencyDao
+from python.logger import Logger
+from python.model.currency import Currency
+from python.repository.cache_repository import CacheRepository
 
 
 class CurrencyRepository:

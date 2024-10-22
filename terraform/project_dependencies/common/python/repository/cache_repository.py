@@ -1,7 +1,7 @@
 from datetime import datetime
 
-from common.python.dao.cache_dao import CacheDao
-from common.python.model.cache import Cache
+from python.dao.cache_dao import CacheDao
+from python.model.cache import Cache
 
 
 class CacheRepository:

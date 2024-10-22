@@ -1,5 +1,5 @@
-from terraform.project_dependencies.common.python.dao.base_dao import BaseDao
-from terraform.project_dependencies.common.python.model.user import User
+from python.dao.base_dao import BaseDao
+from python.model.user import User
 
 
 class UserDao(BaseDao):
