@@ -29,7 +29,7 @@ def get_history_lambda_handler(event: dict, _: Optional[dict]) -> dict[str, Any]
     except ValueError as e:
         return Response(status_code=ResponseCodes.Status400.value[0], headers={}, body=e.__str__()).to_dict()
     except Exception as e:
-        return Response(status_code=ResponseCodes.Status500.value[0], headers={}, body=e.__str__()).to_dict()
+        return Response(status_code=ResponseCodes.Status500.value[0], headers={}, body=e).to_dict()
 
 
 def get_currency_history(base: str, start_at: Optional[str], end_at: Optional[str], symbols: Optional[List[str]]) -> str:
