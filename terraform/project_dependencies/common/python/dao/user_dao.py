@@ -1,5 +1,5 @@
-from python.dao.base_dao import BaseDao
-from python.model.user import User
+from dao.base_dao import BaseDao
+from model.user import User
 
 
 class UserDao(BaseDao):

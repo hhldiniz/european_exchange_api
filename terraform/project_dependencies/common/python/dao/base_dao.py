@@ -4,10 +4,10 @@ from collections import OrderedDict
 
 from pymongo.errors import CollectionInvalid, BulkWriteError
 
-from python.exceptions.schema_validation_exception import SchemaValidationException
-from python.logger import Logger
-from python.model.base_model import BaseModel
-from python.util.db_connection import DatabaseConnection
+from exceptions.schema_validation_exception import SchemaValidationException
+from logger import Logger
+from model.base_model import BaseModel
+from util.db_connection import DatabaseConnection
 
 
 class BaseDao(ABC):

@@ -3,9 +3,9 @@ import inspect
 from pymongo import MongoClient
 from pymongo.results import InsertOneResult, InsertManyResult, UpdateResult, DeleteResult
 
-from python.logger import Logger
-from python.util.providers.database_provider import get_provider
-from python.util.singleton import Singleton
+from logger import Logger
+from util.providers.database_provider import get_provider
+from util.singleton import Singleton
 
 
 class DatabaseConnection(metaclass=Singleton):

@@ -1,6 +1,6 @@
 from loguru import logger
 
-from python.util.singleton import Singleton
+from util.singleton import Singleton
 
 
 class Logger(metaclass=Singleton):

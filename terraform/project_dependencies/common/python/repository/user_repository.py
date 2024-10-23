@@ -1,5 +1,5 @@
-from python.dao.user_dao import UserDao
-from python.model.user import User
+from dao.user_dao import UserDao
+from model.user import User
 
 
 class UserRepository:

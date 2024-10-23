@@ -1,5 +1,5 @@
-from python.dao.base_dao import BaseDao
-from python.model.cache import Cache
+from dao.base_dao import BaseDao
+from model.cache import Cache
 
 
 class CacheDao(BaseDao):

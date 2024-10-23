@@ -2,8 +2,8 @@ from typing import Generator
 
 from pymongo.results import InsertManyResult, DeleteResult, UpdateResult, InsertOneResult
 
-from python.dao.base_dao import BaseDao
-from python.model.currency import Currency
+from dao.base_dao import BaseDao
+from model.currency import Currency
 
 
 class CurrencyDao(BaseDao):

@@ -4,8 +4,8 @@ import requests
 
 from python import constants
 
-from python.logger import Logger
-from python.util.response import Response, CommonHeaders
+from logger import Logger
+from util.response import Response, CommonHeaders
 
 
 def get_currencies_lambda_handler(event: dict, context: Optional[dict]) -> dict[str, Any]:
