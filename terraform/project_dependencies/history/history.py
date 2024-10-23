@@ -12,7 +12,6 @@ def get_history_lambda_handler(event: dict, _: Optional[dict]) -> dict[str, Any]
     try:
         Logger.i(f"Params: {event}")
         action: str = event["action"].upper()
-        event_values = event.values()
         headers = {CommonHeaders.ContentType.value: "application/json"}
         ok_response_code = ResponseCodes.Status200.value[0]
         start_at = event['start_at']
