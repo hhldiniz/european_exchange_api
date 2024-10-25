@@ -1,10 +1,6 @@
 import os
 from enum import Enum
 
-from dotenv import load_dotenv
-
-load_dotenv()
-
 
 class Config(Enum):
     DB_USER = os.getenv("DB_USER")

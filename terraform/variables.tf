@@ -1,41 +1,3 @@
-variable "resource_group_name_prefix" {
-  default     = "rg"
-  description = "Prefix of the resource group name that's combined with a random ID so name is unique in your Azure subscription."
-}
-
-variable "resource_group_location" {
-  default     = "brazilsouth"
-  description = "Location of the resource group."
-}
-
-variable "log_level" {
-  default = "Verbose"
-}
-
-variable "log_retention_days" {
-  default = 7
-}
-
-variable "subscription_id" {
-  type = string
-  sensitive = true
-}
-
-variable "client_id" {
-  type = string
-  sensitive = true
-}
-
-variable "client_secret" {
-  type = string
-  sensitive = true
-}
-
-variable "tenant_id" {
-  type = string
-  sensitive = true
-}
-
 variable "app_name" {
   type = string
   default = "european-exchange-api"
@@ -74,4 +36,19 @@ variable "api_db_cluster_name" {
 variable "mongo_cluster_region" {
   type = string
   default = "SOUTH_AMERICA_EAST_1"
+}
+
+variable "aws_region" {
+  type = string
+  default = "sa-east-1"
+}
+
+variable "aws_access_key" {
+  type = string
+  sensitive = true
+}
+
+variable "aws_secret_key" {
+  type = string
+  sensitive = true
 }
