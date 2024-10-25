@@ -1,8 +1,8 @@
 import pymongo
 from pymongo import MongoClient
 
-from python.config import Config
-from python.util.providers.base_database_provider import BaseDatabaseProvider
+from config import Config
+from util.providers.base_database_provider import BaseDatabaseProvider
 
 
 class RemoteDatabaseProvider(BaseDatabaseProvider):

@@ -7,10 +7,10 @@ import pymongo
 from requests import get
 
 from python import constants
-from python.dao.currency_dao import CurrencyDao
-from python.logger import Logger
-from python.model.currency import Currency
-from python.repository.cache_repository import CacheRepository
+from dao.currency_dao import CurrencyDao
+from logger import Logger
+from model.currency import Currency
+from repository.cache_repository import CacheRepository
 
 
 class CurrencyRepository:

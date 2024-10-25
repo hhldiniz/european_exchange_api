@@ -2,10 +2,10 @@ import json
 from typing import Optional, Any, List
 
 from action import Action
-from python.logger import Logger
-from python.repository.currency_repository import CurrencyRepository
-from python.util.json_encoder import MyJsonEncoder
-from python.util.response import CommonHeaders, ResponseCodes, Response
+from logger import Logger
+from repository.currency_repository import CurrencyRepository
+from util.json_encoder import MyJsonEncoder
+from util.response import CommonHeaders, ResponseCodes, Response
 
 
 def get_history_lambda_handler(event: dict, _: Optional[dict]) -> dict[str, Any]:
@@ -27,12 +27,18 @@ def get_history_lambda_handler(event: dict, _: Optional[dict]) -> dict[str, Any]
         else:
             return Response(status_code=ResponseCodes.Status400.value[0], headers={}, body="BAD REQUEST").to_dict()
     except ValueError as e:
-        return Response(status_code=ResponseCodes.Status400.value[0], headers={}, body=e.__str__()).to_dict()
+        return Response(status_code=ResponseCodes.Status400.value[0], headers={},
+                        body=f"{type(e).__name__}: {str(e)}").to_dict()
+    except KeyError as e:
+        return Response(status_code=ResponseCodes.Status400.value[0], headers={},
+                        body=f"{e}: Could not read key from dict. Available keys in event are {event.keys()}").to_dict()
     except Exception as e:
-        return Response(status_code=ResponseCodes.Status500.value[0], headers={}, body=e).to_dict()
+        return Response(status_code=ResponseCodes.Status500.value[0], headers={},
+                        body=f"{type(e).__name__}: {str(e)}.\n Passed attributes: {event}").to_dict()
 
 
-def get_currency_history(base: str, start_at: Optional[str], end_at: Optional[str], symbols: Optional[List[str]]) -> str:
+def get_currency_history(base: str, start_at: Optional[str], end_at: Optional[str],
+                         symbols: Optional[List[str]]) -> str:
     Logger.i("Request /history")
     currency_repository = CurrencyRepository()
     return json.dumps(currency_repository.get_all(base, start_at, end_at, symbols), cls=MyJsonEncoder)

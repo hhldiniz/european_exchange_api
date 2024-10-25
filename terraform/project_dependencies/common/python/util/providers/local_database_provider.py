@@ -1,7 +1,7 @@
 import pymongo
 from pymongo import MongoClient
 
-from python.util.providers.base_database_provider import BaseDatabaseProvider
+from util.providers.base_database_provider import BaseDatabaseProvider
 
 
 class LocalDatabaseProvider(BaseDatabaseProvider):
