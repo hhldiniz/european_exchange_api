@@ -2,7 +2,6 @@ import json
 from typing import Optional, Any, List
 
 from action import Action
-from logger import Logger
 from repository.currency_repository import CurrencyRepository
 from util.json_encoder import MyJsonEncoder
 from util.response import CommonHeaders, ResponseCodes, Response
@@ -10,7 +9,7 @@ from util.response import CommonHeaders, ResponseCodes, Response
 
 def get_history_lambda_handler(event: dict, _: Optional[dict]) -> dict[str, Any]:
     try:
-        Logger.i(f"Params: {event}")
+        print(f"Params: {event}")
         action: str = event["action"].upper()
         headers = {CommonHeaders.ContentType.value: "application/json"}
         ok_response_code = ResponseCodes.Status200.value[0]
@@ -39,13 +38,13 @@ def get_history_lambda_handler(event: dict, _: Optional[dict]) -> dict[str, Any]
 
 def get_currency_history(base: str, start_at: Optional[str], end_at: Optional[str],
                          symbols: Optional[List[str]]) -> str:
-    Logger.i("Request /history")
+    print("Request /history")
     currency_repository = CurrencyRepository()
     return json.dumps(currency_repository.get_all(base, start_at, end_at, symbols), cls=MyJsonEncoder)
 
 
 def get_currency_latest(symbol: str) -> str:
-    Logger.i("Request /latest")
+    print("Request /latest")
     if symbol is None:
         raise ValueError("Missing argument")
     currency_repository = CurrencyRepository()
