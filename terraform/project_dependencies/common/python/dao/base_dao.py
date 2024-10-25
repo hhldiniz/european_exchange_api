@@ -5,7 +5,6 @@ from collections import OrderedDict
 from pymongo.errors import CollectionInvalid, BulkWriteError
 
 from exceptions.schema_validation_exception import SchemaValidationException
-from logger import Logger
 from model.base_model import BaseModel
 from util.db_connection import DatabaseConnection
 
@@ -43,7 +42,7 @@ class BaseDao(ABC):
         pass
 
     def _validate(self):
-        Logger.i("BaseDao#_validate -> Starting schema validation")
+        print("BaseDao#_validate -> Starting schema validation")
         validator = {'$jsonSchema': {'bsonType': 'object', 'properties': {}}}
         required = []
         user_schema = self.schema
@@ -75,6 +74,6 @@ class BaseDao(ABC):
             self.db_connection.create_collection(l_collection)
             self.db_connection.run_command(OrderedDict(query))
         except CollectionInvalid as e:
-            Logger.i(f"BaseDao#_validate: {e}")
+            print(f"BaseDao#_validate: {e}")
         except BulkWriteError:
             raise SchemaValidationException
