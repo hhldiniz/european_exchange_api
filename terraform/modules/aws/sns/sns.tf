@@ -1,3 +1,3 @@
-resource "aws_sns_topic" "lambda_trigger" {
+resource "aws_sns_topic" "topic" {
   name = var.sns_topic_name
 }

@@ -104,3 +104,11 @@ module "sns_trigger_get_currency_history_lambda" {
   source         = "./modules/aws/sns"
   sns_topic_name = "${var.app_name}-get-currency-history-lambda-trigger"
 }
+
+module "sns_topic_subscription_for_get_currencies_lambda" {
+  source    = "./modules/aws/sns/sns_topic_subscription"
+  protocol  = "lambda"
+  endpoint  = module.lambda_get_currencies.lambda_arn
+  topic_arn = module.sns_trigger_get_currencies_lambda.sns_topic_arn
+  depends_on = [module.sns_trigger_get_currencies_lambda]
+}
