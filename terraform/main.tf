@@ -14,6 +14,27 @@ locals {
 module "lambda_iam_role" {
   source    = "./modules/aws/iam"
   role_name = "default-lambda-role"
+  iam_policy_name = "lambda_logs_policy"
+  iam_policy_for_attachment_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+  trust_policy = {
+    actions = ["sts:AssumeRole"]
+    effect = "Allow"
+    principals = {
+      identifiers = ["lambda.amazonaws.com"]
+      type = "Service"
+    }
+  }
+  iam_policy = [
+      {
+        Action = [
+          "logs:CreateLogGroup",
+          "logs:CreateLogStream",
+          "logs:PutLogEvents"
+        ]
+        Effect = "Allow"
+        Resource = "*"
+      }
+    ]
 }
 
 module "lambda_get_currencies" {
