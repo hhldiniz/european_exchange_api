@@ -96,6 +96,11 @@ resource "null_resource" "install_external_dependencies" {
 }
 
 module "sns_trigger_get_currencies_lambda" {
-  source               = "./modules/aws/sns"
-  sns_topic_name       = "${var.app_name}-get-currencies-lambda-trigger"
+  source         = "./modules/aws/sns"
+  sns_topic_name = "${var.app_name}-get-currencies-lambda-trigger"
+}
+
+module "sns_trigger_get_currency_history_lambda" {
+  source         = "./modules/aws/sns"
+  sns_topic_name = "${var.app_name}-get-currency-history-lambda-trigger"
 }
