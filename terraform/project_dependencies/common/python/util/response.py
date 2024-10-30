@@ -16,7 +16,7 @@ class Response:
         }
 
 class CommonHeaders(enum.Enum):
-    ContentType = "Content-Type",
+    ContentType = "Content-Type"
 
 class ResponseCodes(enum.Enum):
     Status200 = (200, "OK")
