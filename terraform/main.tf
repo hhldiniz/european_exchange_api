@@ -29,7 +29,8 @@ module "lambda_iam_role" {
       Action = [
         "logs:CreateLogGroup",
         "logs:CreateLogStream",
-        "logs:PutLogEvents"
+        "logs:PutLogEvents",
+        "sns:Publish"
       ]
       Effect   = "Allow"
       Resource = "*"
@@ -45,6 +46,8 @@ module "lambda_get_currencies" {
   lambda_function_runtime_type = local.lambda_runtime
   lambda_iam_role_arn          = module.lambda_iam_role.iam_role_arn
   layers = [module.common_layer.layer_arn]
+  result_destination_arn = module.sns_result_get_currencies_lambda.sns_topic_arn
+  enable_result_publishing = true
   depends_on = [data.archive_file.zip_lambda_get_currencies, module.common_layer]
 }
 
@@ -56,11 +59,13 @@ module "lambda_get_currency_history" {
   lambda_function_runtime_type = local.lambda_runtime
   lambda_iam_role_arn          = module.lambda_iam_role.iam_role_arn
   layers = [module.common_layer.layer_arn]
+  result_destination_arn = module.sns_result_get_currency_history_lambda.sns_topic_arn
+  enable_result_publishing = true
   depends_on = [data.archive_file.zip_lambda_get_currency_history, module.common_layer]
 }
 
 module "common_layer" {
-  source                = "./modules/aws/lambda_layer"
+  source                = "./modules/aws/lambda/lambda_layer"
   lambda_layer_filename = data.archive_file.zip_common_lambda_layer.output_path
   lambda_layer_name     = "CommonLayer"
   depends_on = [data.archive_file.zip_common_lambda_layer]
@@ -100,9 +105,19 @@ module "sns_trigger_get_currencies_lambda" {
   sns_topic_name = "${var.app_name}-get-currencies-lambda-trigger"
 }
 
+module "sns_result_get_currencies_lambda" {
+  source = "./modules/aws/sns"
+  sns_topic_name = "${var.app_name}-get-currencies-lambda-result"
+}
+
 module "sns_trigger_get_currency_history_lambda" {
   source         = "./modules/aws/sns"
   sns_topic_name = "${var.app_name}-get-currency-history-lambda-trigger"
+}
+
+module "sns_result_get_currency_history_lambda" {
+  source = "./modules/aws/sns"
+  sns_topic_name = "${var.app_name}-get-currency-history-lambda-result"
 }
 
 module "sns_topic_subscription_for_get_currencies_lambda" {

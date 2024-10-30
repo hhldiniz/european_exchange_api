@@ -1,19 +1,19 @@
 variable "endpoint" {
-  type = string
+  type        = string
   description = "An ARN of a AWS resource"
 }
 
 variable "protocol" {
-  type = string
+  type        = string
   description = "The type of the SNS subscription"
 }
 
 variable "topic_arn" {
-  type = string
+  type        = string
   description = "ARN of the SNS topic to subscribe"
 }
 
 variable "function_name" {
-  type = string
+  type        = string
   description = "Name of the Lambda function"
 }
