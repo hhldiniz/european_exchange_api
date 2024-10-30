@@ -110,6 +110,7 @@ module "sns_topic_subscription_for_get_currencies_lambda" {
   protocol  = "lambda"
   endpoint  = module.lambda_get_currencies.lambda_arn
   topic_arn = module.sns_trigger_get_currencies_lambda.sns_topic_arn
+  function_name = module.lambda_get_currencies.function_name
   depends_on = [module.sns_trigger_get_currencies_lambda]
 }
 
@@ -118,5 +119,6 @@ module "sns_topic_subscription_for_get_currency_history_lambda" {
   endpoint = module.lambda_get_currency_history.lambda_arn
   protocol = "lambda"
   topic_arn = module.sns_trigger_get_currency_history_lambda.sns_topic_arn
+  function_name = module.lambda_get_currency_history.function_name
   depends_on = [module.sns_trigger_get_currency_history_lambda]
 }

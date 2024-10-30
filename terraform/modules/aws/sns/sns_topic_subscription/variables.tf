@@ -12,3 +12,8 @@ variable "topic_arn" {
   type = string
   description = "ARN of the SNS topic to subscribe"
 }
+
+variable "function_name" {
+  type = string
+  description = "Name of the Lambda function"
+}
