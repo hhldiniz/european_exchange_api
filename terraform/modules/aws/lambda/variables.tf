@@ -33,3 +33,9 @@ variable "enable_result_publishing" {
   default = false
   description = "Enable or disable the result publishing to an SNS topic"
 }
+
+variable "lambda_timeout" {
+  type = number
+  default = 3
+  description = "The amount of time your Lambda Function has to run in seconds."
+}
