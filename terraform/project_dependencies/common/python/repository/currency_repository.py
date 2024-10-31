@@ -9,7 +9,7 @@ from requests import get
 import constants
 from dao.currency_dao import CurrencyDao
 from model.currency import Currency
-from cache_repository import CacheRepository
+from repository.cache_repository import CacheRepository
 
 
 class CurrencyRepository:
