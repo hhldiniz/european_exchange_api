@@ -6,10 +6,10 @@ from xml.etree import ElementTree
 import pymongo
 from requests import get
 
-from python import constants
+import constants
 from dao.currency_dao import CurrencyDao
 from model.currency import Currency
-from repository.cache_repository import CacheRepository
+from cache_repository import CacheRepository
 
 
 class CurrencyRepository:
