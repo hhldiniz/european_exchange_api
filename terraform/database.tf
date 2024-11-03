@@ -1,7 +1,3 @@
-locals {
-  database_create_script = "./create_database.sh"
-}
-
 resource "mongodbatlas_project" "atlas_project" {
   name   = "Exchange Api"
   org_id = var.mongo_organization_id
