@@ -1,3 +1,7 @@
+locals {
+  database_create_script = "./create_database.sh"
+}
+
 resource "mongodbatlas_project" "atlas_project" {
   name   = "Exchange Api"
   org_id = var.mongo_organization_id
@@ -8,11 +12,11 @@ resource "mongodbatlas_database_user" "mongo_user" {
   username           = "backend"
   password           = var.mongo_db_password
   auth_database_name = "admin"
-  roles {
-    role_name = "readWriteAnyDatabase"
-    database_name = "admin"
-  }
 
+  roles {
+    database_name = var.app_name
+    role_name     = "readWrite"
+  }
 }
 
 resource "mongodbatlas_cluster" "api_database_cluster" {
