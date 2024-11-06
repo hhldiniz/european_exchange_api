@@ -138,3 +138,13 @@ module "sns_topic_subscription_for_get_currency_history_lambda" {
   function_name = module.lambda_get_currency_history.function_name
   depends_on = [module.sns_trigger_get_currency_history_lambda]
 }
+
+module "flagsmith_feature" {
+  source = "./modules/flagsmith/features"
+  feature_name = "aws_region"
+  feature_description = "Set of feature flags for ${var.app_name}"
+  project_uuid = var.flagsmith_project_uuid
+  flagsmith_api_key = var.master_api_key
+  feature_enabled = true
+  feature_state_value = "test"
+}

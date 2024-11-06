@@ -52,3 +52,14 @@ variable "aws_secret_key" {
   type = string
   sensitive = true
 }
+
+variable "master_api_key" {
+  type = string
+  sensitive = true
+}
+
+variable "flagsmith_project_uuid" {
+  type = string
+  sensitive = true
+  description = "UUID of the Flagsmith project"
+}
