@@ -52,6 +52,7 @@ module "lambda_get_currency_history" {
   environment = {
     DB_USER = var.mongo_db_user
     DB_PASSWORD = var.mongo_db_password
+    DB_NAME = var.app_name
     ENVIRONMENT = "PROD"
   }
   depends_on = [data.archive_file.zip_lambda_get_currency_history, module.common_layer]
