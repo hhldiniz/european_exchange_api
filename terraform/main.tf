@@ -10,3 +10,17 @@ locals {
   lambda_runtime                          = "python3.10"
   modules = ["common", "currency"]
 }
+
+module "cotacaodireta_aws_iam_user" {
+  source        = "./modules/aws/iam/iam_user"
+  iam_user_name = "cotacaodireta"
+  allowed_user_actions = [
+    "sns:Publish",
+    "ssm:GetParameter",
+    "ssm:GetParameters",
+    "ssm:GetParametersByPath"
+  ]
+  allowed_user_resources = [
+    "arn:aws:ssm:*:*:parameter/*"
+  ]
+}
