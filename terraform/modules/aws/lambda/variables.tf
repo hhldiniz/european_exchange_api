@@ -39,3 +39,9 @@ variable "lambda_timeout" {
   default = 3
   description = "The amount of time your Lambda Function has to run in seconds."
 }
+
+variable "environment" {
+  type = map(string)
+  default = {}
+  description = "A map that defines environment variables for the Lambda function."
+}

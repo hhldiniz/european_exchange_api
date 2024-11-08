@@ -49,6 +49,9 @@ module "lambda_get_currency_history" {
   result_destination_arn = module.sns_result_get_currency_history_lambda.sns_topic_arn
   enable_result_publishing = true
   lambda_timeout = 30
+  environment = {
+    ENVIRONMENT = "PROD"
+  }
   depends_on = [data.archive_file.zip_lambda_get_currency_history, module.common_layer]
 }
 
