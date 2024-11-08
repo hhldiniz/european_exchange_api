@@ -17,7 +17,3 @@ resource "aws_iam_user_policy" "iam_user_policy" {
     ]
   })
 }
-
-resource "aws_iam_access_key" "user_access_key" {
-  user = aws_iam_user.iam_user.name
-}
