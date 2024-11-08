@@ -51,12 +51,16 @@ class DatabaseConnection(metaclass=Singleton):
         if type(sort_by) is list or type(sort_by) is str:
             result = self.__database.get_collection(collection).find_one(ftr)
             if result is not None:
+                print(f"DatabaseConnection#select_one -> Found '{len(result)}' records in '{collection}'")
                 return result.sort(sort_by)
+            print(f"DatabaseConnection#select_one -> NO RECORDS FOUND in '{collection}' with filter '{ftr}'")
             return result
         if type(sort_by) is tuple:
             result = self.__database.get_collection(collection).find_one(ftr)
             if result is not None:
+                print(f"DatabaseConnection#select_one -> Found '{len(result)}' records in '{collection}'")
                 return result.sort(sort_by[0], sort_by[1])
+            print(f"DatabaseConnection#select_one -> NO RECORDS FOUND in '{collection}' with filter '{ftr}'")
             return result
         return self.__database.get_collection(collection).find_one(ftr)
 
