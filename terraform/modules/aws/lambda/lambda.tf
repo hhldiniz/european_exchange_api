@@ -9,6 +9,10 @@ resource "aws_lambda_function" "function" {
   environment {
     variables = var.environment
   }
+  vpc_config {
+    security_group_ids = var.security_groups_ids
+    subnet_ids = var.subnet_ids
+  }
   source_code_hash = filebase64sha256(var.lambda_function_filename)
 }
 

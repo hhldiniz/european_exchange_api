@@ -15,6 +15,11 @@ resource "mongodbatlas_database_user" "mongo_user" {
   }
 }
 
+resource "mongodbatlas_project_ip_access_list" "allowed_access_address" {
+  project_id = mongodbatlas_project.atlas_project.id
+  ip_address = aws_eip.nat_eip.public_ip
+}
+
 resource "mongodbatlas_cluster" "api_database_cluster" {
   cluster_type                = "REPLICASET"
   name                        = var.api_db_cluster_name

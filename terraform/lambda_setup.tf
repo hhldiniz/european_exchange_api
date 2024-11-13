@@ -55,7 +55,14 @@ module "lambda_get_currency_history" {
     DB_NAME = var.app_name
     ENVIRONMENT = "PROD"
   }
+  subnet_ids = module.lambda_private_subnet.subnet_ids
+  security_groups_ids = module.lambda_security_group.security_group_ids
   depends_on = [data.archive_file.zip_lambda_get_currency_history, module.common_layer]
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_vpc_access" {
+  role       = module.lambda_iam_role.iam_role_name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
 }
 
 module "common_layer" {
