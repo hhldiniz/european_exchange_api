@@ -56,7 +56,7 @@ module "lambda_get_currency_history" {
     ENVIRONMENT = "PROD"
   }
   subnet_ids = module.lambda_private_subnet.subnet_ids
-  security_groups_ids = module.lambda_security_group.security_group_ids
+  security_group_ids = module.lambda_security_group.security_group_ids
   depends_on = [data.archive_file.zip_lambda_get_currency_history, module.common_layer]
 }
 
