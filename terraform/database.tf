@@ -6,3 +6,12 @@ module "cache_database" {
   write_capacity = 25
   read_capacity = 25
 }
+
+module "currency_database" {
+  source = "./modules/aws/dynamo"
+  hash_key = "currency_code"
+  table_name = "Currency"
+  hash_key_type = "S"
+  write_capacity = 25
+  read_capacity = 25
+}
