@@ -1,85 +1,173 @@
-import inspect
-
-from pymongo import MongoClient
-from pymongo.results import InsertOneResult, InsertManyResult, UpdateResult, DeleteResult
-
-from util.providers.database_provider import get_provider
+import boto3
+from util.config import Config
 from util.singleton import Singleton
 
 
 class DatabaseConnection(metaclass=Singleton):
     def __init__(self):
-        self.__database: MongoClient = get_provider().get_database()
+        self.__database = boto3.client('dynamodb', region=Config.AWS_REGION.value)
 
-    def insert(self, collection: str, data: dict) -> InsertOneResult:
-        print(f"DatabaseConnection#insert -> Inserting on object in collection {collection}")
-        print(f"data = {data}")
-        return self.__database.get_collection(collection).insert_one(data)
+    def insert_one(self, table: str, obj: dict):
+        """
+        Inserts a single object into the database
+        table: str -- The name of the table to insert into
+        obj: dict -- The object to insert
+        """
+        self.__database.put_item(
+            TableName=table,
+            Item=obj
+        )
 
-    def insert_many(self, collection: str, data: [dict]) -> InsertManyResult:
-        print(f"DatabaseConnection#insert_many -> "
-                 f"Inserting multiple objects in collection {collection}")
-        print(f"data = {data}")
-        return self.__database.get_collection(collection).insert_many(data)
+    def insert_many(self, table: str, objs: [dict]):
+        """
+        Inserts multiple objects into the database
+        table: str -- The name of the table to insert into
+        objs: [dict] -- The objects to insert
+        """
+        # update_many also inserts data if it doesn't exist
+        return self.update_many(table, objs)
 
-    def update_one(self, collection: str, condition: dict, data: dict) -> UpdateResult:
-        print(f"DatabaseConnection#update_one -> "
-                 f"Updating one object in collection {collection} with condition {condition}")
-        print(f"data = {data}")
-        return self.__database.get_collection(collection).replace_one(condition, data)
+    def select_one(self, table: str, ftr: dict)-> [dict, None]:
+        """
+        Returns a single object from the database
+        table: str -- The name of the table to query upon
+        ftr: dict -- The filter to apply to the query
+        """
+        response = self.__database.get_item(
+            TableName=table,
+            Key=ftr
+        )
 
-    def update_many(self, collection: str, condition: dict, data: dict) -> UpdateResult:
-        print(f"DatabaseConnection#update_many -> Updating many objects in collection "
-                 f"{collection} with condition {condition}")
-        print(f"data = {data}")
-        return self.__database.get_collection(collection).update_many(condition, data)
+        response.get('Item', default=None)
 
-    def delete_one(self, collection: str, ftr: dict) -> DeleteResult:
-        print(f"DatabaseConnection#delete_one -> Deleting one object from collection {collection}")
-        print(f"ftr = {ftr}")
-        return self.__database.get_collection(collection).delete_one(ftr)
+    def select_many(self, table: str, ftr: dict)-> [dict]:
+        """
+        Returns a list of objects from the database
+        table: str -- The name of the table to query upon
+        ftr: dict -- The filter to apply to the query
+        """
+        expression_values = {f":val{i}": value for i, value in enumerate(ftr.values())}
+        expression_names = {f"#attr{i}": key for i, key in enumerate(ftr.keys())}
+        filter_expression = " AND ".join([f"#attr{i} = :val{i}" for i in range(len(ftr))])
 
-    def delete_many(self, collection: str, ftr: dict) -> DeleteResult:
-        print(f"DatabaseConnection#delete_many -> Deleting many objects from collection {collection}")
-        print(f"ftr = {ftr}")
-        return self.__database.get_collection(collection).delete_many(ftr)
+        response = self.__database.scan(
+            TableName=table,
+            FilterExpression=filter_expression,
+            ExpressionAttributeValues=expression_values,
+            ExpressionAttributeNames=expression_names
+        )
 
-    def select_one(self, collection: str, ftr: dict, sort_by: [list[tuple], tuple, str, None] = None) -> [dict, None]:
-        print(f"DatabaseConnection#select_one -> Finding a single object with params: "
-                 f"collection = {collection}, sort_by = {sort_by}")
-        print(f"filter = {ftr}")
-        if type(sort_by) is list or type(sort_by) is str:
-            result = self.__database.get_collection(collection).find_one(ftr)
-            if result is not None:
-                print(f"DatabaseConnection#select_one -> Found '{len(result)}' records in '{collection}'")
-                return result.sort(sort_by)
-            print(f"DatabaseConnection#select_one -> NO RECORDS FOUND in '{collection}' with filter '{ftr}'")
-            return result
-        if type(sort_by) is tuple:
-            result = self.__database.get_collection(collection).find_one(ftr)
-            if result is not None:
-                print(f"DatabaseConnection#select_one -> Found '{len(result)}' records in '{collection}'")
-                return result.sort(sort_by[0], sort_by[1])
-            print(f"DatabaseConnection#select_one -> NO RECORDS FOUND in '{collection}' with filter '{ftr}'")
-            return result
-        return self.__database.get_collection(collection).find_one(ftr)
+        if response.get('Items', default=None):
+            return response['Items']
+        else:
+            return []
 
-    def select_many(self, collection: str, ftr: dict) -> [dict]:
-        print(f"DatabaseConnection#select_many -> select_many from {collection} collection with filter {ftr}")
-        return self.__database.get_collection(collection).find(ftr)
+    def update_one(self, table: str, ftr: dict):
+        """
+        Updates a single object in the database
+        table: str -- The name of the table to query upon
+        ftr: str -- The filter to apply to the query
+        """
+        key = {k: ftr[k] for k in ['timestamp']}
+        update_attrs = {k: v for k, v in ftr.items() if k != 'timestamp'}
 
-    def create_collection(self, collection: str):
-        print(f"DatabaseConnection#create_collection -> Creating collection with name {collection}")
-        self.__database.create_collection(collection)
+        expression_values = {f":val{i}": value for i, value in enumerate(update_attrs.values())}
+        expression_names = {f"#attr{i}": key for i, key in enumerate(update_attrs.keys())}
+        update_expression = "SET " + ", ".join([f"#attr{i} = :val{i}" for i in range(len(update_attrs))])
 
-    def run_command(self, command: dict):
-        all_stack_frames = inspect.stack()
-        caller_stack_frame = all_stack_frames[1]
-        caller_name = caller_stack_frame[3]
+        response = self.__database.update_item(
+            TableName=table,
+            Key=key,
+            UpdateExpression=update_expression,
+            ExpressionAttributeValues=expression_values,
+            ExpressionAttributeNames=expression_names
+        )
 
-        print(f"DatabaseConnection#run_command -> Running command passed by {caller_name}")
-        self.__database.command(command)
+        return response
 
-    def find_and_update(self, collection: str, condition: dict, data: dict):
-        print(f"DatabaseConnection#find_and_update -> Finding and updating collection {collection}")
-        self.__database.get_collection(collection).find_one_and_update(condition, data)
+    def update_many(self, table: str, ftr: dict):
+        """
+        Updates multiple objects in the database
+        table: str -- The name of the table to query upon
+        ftr: str -- The filter to apply to the query
+        """
+        key = list(ftr.keys())[0]
+        update_attrs = {k: v for k, v in ftr.items() if k != key}
+
+        # First get all matching items
+        items = self.select_many(table, key)
+
+        # Prepare batch write requests
+        batch_items = {
+            table: [
+                {
+                    'PutRequest': {
+                        'Item': {**item, **update_attrs}
+                    }
+                }
+                for item in items
+            ]
+        }
+
+        # DynamoDB has a limit of 25 items per batch write
+        batch_size = 25
+        responses = []
+
+        for i in range(0, len(batch_items[table]), batch_size):
+            batch_chunk = {
+                table: batch_items[table][i:i + batch_size]
+            }
+            response = self.__database.batch_write_item(
+                RequestItems=batch_chunk
+            )
+            responses.append(response)
+
+        return responses
+
+    def delete_one(self, table: str, ftr: dict):
+        """
+        Deletes a single object from the database
+        table: str -- The name of the table to query upon
+        ftr: dict -- The filter to apply to the query
+        """
+        response = self.__database.delete_item(
+            TableName=table,
+            Key=ftr
+        )
+        return response
+
+    def delete_many(self, table, ftr):
+        """
+        Deletes multiple objects from the database
+        table: str -- The name of the table to query upon
+        ftr: dict -- The filter to apply to the query
+        """
+        # First get all matching items
+        items = self.select_many(table, ftr)
+
+        # Prepare batch write requests
+        batch_items = {
+            table: [
+                {
+                    'DeleteRequest': {
+                        'Key': item
+                    }
+                }
+                for item in items
+            ]
+        }
+
+        # DynamoDB has a limit of 25 items per batch write
+        batch_size = 25
+        responses = []
+
+        for i in range(0, len(batch_items[table]), batch_size):
+            batch_chunk = {
+                table: batch_items[table][i:i + batch_size]
+            }
+            response = self.__database.batch_write_item(
+                RequestItems=batch_chunk
+            )
+            responses.append(response)
+
+        return responses
